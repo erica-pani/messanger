@@ -78,9 +78,14 @@ function onMessageReceived(payload) {
     const contentEl = document.createElement("p");
     contentEl.textContent = message.content;
 
+    const timeEl = document.createElement("p");
+    timeEl.classList.add("message-time");
+    timeEl.textContent = message.time;
+
     // Elemente zusammenbauen
     container.appendChild(usernameEl);
     container.appendChild(contentEl);
+    container.appendChild(timeEl);
     li.appendChild(container);
 
     // In die Liste einfügen

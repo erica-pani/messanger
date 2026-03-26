@@ -55,6 +55,10 @@ body {
     position: relative;
     padding: 0 0 7px 0;
     margin: 0 0 0 80px;
+
+    max-width: 100%;
+    word-break: break-word;
+    height: auto;
 }
 
 .message-attributes::before {
@@ -109,7 +113,8 @@ body {
 
 #message-input {
     position: relative;
-    height: 35px;
+    height: auto;
+    min-height: 20px;
     width: 67%;
     padding: 0;
     margin: 0;
@@ -118,6 +123,9 @@ body {
     outline: none;
     background-color: inherit;
 
+    resize: none;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .send-button {
@@ -152,4 +160,13 @@ body {
     margin: 0 0 7px 0;
     padding: 0;
     color: #dcdcdc;
+    white-space: pre-wrap;
+}
+
+#chat-messages .chat-message-card .message-attributes .message-time {
+    position: absolute;
+    right: 1%;
+    
+    color: gray;
+    font-size: small;
 }

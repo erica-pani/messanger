@@ -1,7 +1,5 @@
 package com.web.messanger.model;
 
-import java.time.LocalTime;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,7 +16,7 @@ public class ChatMessage {
     
     private String content;
     private String sender;
-    private LocalTime time;
+    private String time;
     private String color;
 
 }

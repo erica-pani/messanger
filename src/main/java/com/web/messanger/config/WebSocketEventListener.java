@@ -1,6 +1,7 @@
 package com.web.messanger.config;
 
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -29,7 +30,7 @@ public class WebSocketEventListener {
             var message = ChatMessage.builder()
                     .content(username + " left the chat")
                     .sender(username)
-                    .time(LocalTime.now())
+                    .time(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")))
                     .build();
             messageTemplate.convertAndSend("/topic/public", message);
         }
