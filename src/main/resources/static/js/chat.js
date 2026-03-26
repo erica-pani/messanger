@@ -28,7 +28,7 @@ function connect() {
         stompClient.send('/app/chat.addUser', {}, JSON.stringify(
             {
                 content: username + " joined",
-                sender: username,
+                senderName: username,
                 color: chatColor
             }
         ));
@@ -39,7 +39,7 @@ function sendMessage(event) {
     let content = document.querySelector("#message-input").value.trim();
     if (content && stompClient) {
         let message = {
-            sender: username,
+            senderName: username,
             content: content,
             color: chatColor,
         }

@@ -29,7 +29,7 @@ public class WebSocketEventListener {
             log.info("User disconnected: {}", username);
             var message = ChatMessage.builder()
                     .content(username + " left the chat")
-                    .sender(username)
+                    .senderName(username)
                     .time(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")))
                     .build();
             messageTemplate.convertAndSend("/topic/public", message);
