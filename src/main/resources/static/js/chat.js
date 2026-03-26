@@ -66,13 +66,13 @@ function onMessageReceived(payload) {
     const container = document.createElement("div");
     container.classList.add("message-attributes");
 
-    container.setAttribute("data-username", message.sender.charAt(0).toUpperCase());
+    container.setAttribute("data-username", message.senderName.charAt(0).toUpperCase());
 
     container.style.setProperty("--bubble-color", message.color);
 
     // Username
     const usernameEl = document.createElement("h4");
-    usernameEl.textContent = message.sender;
+    usernameEl.textContent = message.senderName;
 
     // Nachricht
     const contentEl = document.createElement("p");
