@@ -11,6 +11,7 @@ import jakarta.persistence.Table;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "Messanger_user")
@@ -30,7 +31,7 @@ public class User {
     private List<ChatMessage> messages;
 
     @ManyToMany(mappedBy = "users")
-    private List<Group> groups;
+    private Set<Group> groups;
 
     public String getFirstname() {
         return firstname;
@@ -70,6 +71,30 @@ public class User {
 
     public String getHashed_password() {
         return hashed_password;
+    }
+
+    public List<ChatMessage> getMessages() {
+        return messages;
+    }
+
+    public void addMessage(ChatMessage message) {
+        messages.add(message);
+    }
+
+    public Set<Group> getGroups() {
+        return groups;
+    }
+
+    public void addGroup(Group group) {
+        groups.add(group);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
 }

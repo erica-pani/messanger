@@ -1,6 +1,7 @@
 package com.web.messanger.model;
 
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -32,7 +33,7 @@ public class Group {
         joinColumns = @JoinColumn(name = "group_id"),
         inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private List<User> users;
+    private Set<User> users;
 
     public Long getId() {
         return id;
@@ -58,6 +59,13 @@ public class Group {
         this.messages = messages;
     }
 
-    
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void addUser(User user) {
+        users.add(user);
+    }
+
 
 }

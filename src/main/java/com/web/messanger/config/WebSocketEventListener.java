@@ -32,7 +32,7 @@ public class WebSocketEventListener {
                     .senderName(username)
                     .time(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")))
                     .build();
-            messageTemplate.convertAndSend("/topic/public", message);
+            messageTemplate.convertAndSend("/topic/public/" + message.getGroup().getName(), message);
         }
     }
 }
