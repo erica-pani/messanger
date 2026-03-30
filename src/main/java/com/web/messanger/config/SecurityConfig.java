@@ -27,13 +27,20 @@ public class SecurityConfig {
         return http
                 .csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request -> request
-                    .requestMatchers("/login", "/login/check", "/css/**").permitAll()
+                    .requestMatchers("/login",
+                                    "/login/check",
+                                    "/css/**", 
+                                    "/images/**",
+                                    "/favicon.ico",
+                                    "/manifest.json",
+                                    "/service-worker.js"
+                                ).permitAll()
                     .anyRequest().authenticated())
 
                 .formLogin(form -> form
                     .loginPage("/login")
                     .loginProcessingUrl("/login/check")
-                    .defaultSuccessUrl("/chat", true)
+                    .defaultSuccessUrl("/groups", true)
                     .failureUrl("/login/failed")
                     .permitAll()
                 )
