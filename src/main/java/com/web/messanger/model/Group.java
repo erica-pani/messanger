@@ -67,5 +67,11 @@ public class Group {
         users.add(user);
     }
 
+    public void removeUser(User user) {
+        if (users.contains(user)) {
+            users.remove(user);
+        }
+    }
+
 
 }

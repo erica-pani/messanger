@@ -1,0 +1,242 @@
+
+:root {
+    --color-default: rgb(31, 31, 31);
+    --color-hover: oklch(from var(--color-default) calc(l + 0.09) c h);
+    --color-border: rgb(158, 158, 158, 0.2);
+    --color-lt-default: oklch(from var(--color-default) calc(l + 0.07) c h);
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+.bodycontainer {
+    height: 100%;
+    width: 100%;
+    display: flex;
+}
+
+.bodycontainer header {
+    height: inherit;
+    width: 65px;
+    border-right: 1px solid var(--color-border) ;
+    background-color: var(--color-lt-default);
+}
+
+.group-and-filter-cont {
+    min-height: 100%;
+    width: 33%;
+    background-color: var(--color-default);
+    border-right: 0.01px solid var(--color-border);
+}
+
+.group-and-filter-cont header {
+    width: 100%;
+    height: 60px;
+
+    background-color: var(--color-default);
+    border: none;
+}
+
+.group-and-filter-cont header .header-wrapper {
+    display: flex;
+    align-items: center;
+
+    height: inherit;
+    width: 90%;
+    margin: 0 auto;
+}
+
+.group-and-filter-cont header .header-wrapper h3 {
+    position: relative;
+    font-size: 1.7rem;
+    color: white;
+    margin: 0;
+}
+
+.group-list {
+   display: grid;
+   gap: 5px;
+}
+
+.group-list .group {
+    
+    height: 76px;
+    width: calc(100% - 20px);
+    margin: 0 10px;
+
+    border-radius: 10px;
+}
+
+.group-list .group:hover {
+
+    background-color: var(--color-hover);
+    transition: 0.2s;
+}
+
+.group-list .group .group-attributes {
+    display: flex;
+    align-items: center;
+    position: relative;
+    gap: 20px;
+
+    height: 100%;
+    width: 100%;
+    color: white;
+}
+
+.group-attributes::before {
+    position: relative;
+    display: inline-block;
+    content: '';
+    height: 50px;
+    width: 50px;
+    margin-left: 15px;
+
+    border-radius: 50px;
+    background-color: aqua;
+}
+
+.group-attributes-wrap {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 50px;
+}
+
+.group-attributes-wrap h3 {
+    margin: 0;
+    padding-top: 3px;
+}
+
+.last-send-message{
+    margin: 0;
+    padding-bottom: 3px;
+    color: rgb(204, 204, 204);
+}
+
+.chat-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    min-height: 100%;
+
+    background-color: var(--color-lt-default);
+}
+
+.chat-area header {
+    display: flex;
+    align-items: center;
+
+    height: 60px;
+    width: 100%;
+
+    background-color: var(--color-default);
+}
+
+.chat-area header::before {
+    position: relative;
+    display: inline-block;
+    content: '';
+
+    background-color: aqua;
+
+    height: 40px;
+    width: 40px;
+    border-radius: 40px;
+    margin-left: 12px;
+}
+
+.group-attributes-in-header {
+    color: white;
+
+    padding-left: 15px;
+}
+
+.chatbox {
+    flex: 1;
+    position: relative;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    background-color: oklch(from var(--color-default) calc(l + 0.01) c h);
+    background-image: url(/img/icons/rain.svg);
+    background-repeat: repeat;
+}
+
+.chatbox ul {
+    margin: 0;
+    padding: 0 0;
+}
+
+.chatbox ul li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    padding: 10px 0;
+}
+
+.message-attributes {
+    position: relative;
+    padding: 0 0 7px 0;
+    margin: 0 auto;
+    width: 95%;
+    color: white;
+    border-bottom: 1px solid var(--color-border);
+
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.message-attributes::before {
+    position: relative;
+    display: inline-block;
+    content: '';
+    height: 40px;
+    width: 40px;
+    background-color: aqua;
+    border-radius: 40px;
+
+}
+
+.message-attributes h4 {
+    margin: 9px 0 0 0;
+    padding: 0;
+    font-weight: bold;
+}
+
+.message-attributes p {
+    margin: 0 0 7px 0;
+    padding: 0;
+}
+
+.message-input-field {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+
+    border-radius: 100px;
+    background-color: var(--color-lt-default);
+}
+
+#message-input {
+    position: relative;
+    width: 67%;
+    height: 100%;
+
+    border: none;
+    outline: none;
+    background-color: inherit;
+    color: white;
+}
