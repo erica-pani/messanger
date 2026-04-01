@@ -13,6 +13,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "Messanger_user")
 public class User {
@@ -30,6 +32,7 @@ public class User {
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
     private List<ChatMessage> messages;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "users")
     private Set<Group> groups;
 

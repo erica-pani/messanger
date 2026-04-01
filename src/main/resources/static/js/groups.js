@@ -32,7 +32,9 @@ function loadChatInfo(groupName) {
             return res.json()
         })
         .then(data => {
-            console.log(data);
+            data.forEach(message => {
+                renderGroups(message);
+            });
         })
         .catch(error => {
             console.log(error);
@@ -40,11 +42,22 @@ function loadChatInfo(groupName) {
 }
 
 function renderChatMessage(message) {
+    const newMessage = document.createElement('li');
 
+    newMessage.innerHTML = `
+        <div class="message-attributes">
+            <div>
+                <h4>${message.senderName}</h4>
+                <p>${message.content}</p>
+            </div>
+            <p class="message-time"></p>
+        </div>`;
+
+    chatMessageList.appendChild(newMessage);
 }
 
 function laodGroups() {
-    fetch('/groups?username=${username}')
+    fetch('/groups?username=' + username)
         .then(res => {
             if(!res.ok) {
                 console.log("Problem");
@@ -54,7 +67,9 @@ function laodGroups() {
             return res.json()
         })
         .then(data => {
-            console.log(data);
+            data.forEach(group => {
+                renderGroups(group);
+            });
         })
         .catch(error => {
             console.log(error);
@@ -62,26 +77,27 @@ function laodGroups() {
 }
 
 function renderGroups(group) {
+    
+    const newGroup = document.createElement("div");
+    newGroup.classList.add("group");
 
+    newGroup.innerHTML = `
+        <div class="group-attributes">
+            <div class="group-attributes-wrap">
+                 <h3>${group.name}</h3>
+                <p class="last-send-message">
+                    Letzte Nachricht
+                </p>
+            </div>
+        </div>`;
+
+    groupList.appendChild(newGroup);
 }
 
 function connect() {
     const socket = new SockJS('/ws');
     stompClient = Stomp.over(socket);
-
-    stompClient.connect({}, frame => {
-        console.log("Connected: " + frame);
-
-        stompClient.subscribe('/topic/public', onMessageReceived);
-
-        stompClient.send('/app/chat.addUser', {}, JSON.stringify(
-            {
-                content: username + " joined",
-                senderName: username,
-                color: chatColor
-            }
-        ));
-    });
+    
 }
 
 groupList.addEventListener('click', (event) => {
@@ -104,5 +120,5 @@ groupList.addEventListener('click', (event) => {
 document.addEventListener('DOMContentLoaded', () => {
     chatColor = availableColors[Math.floor(Math.random() * availableColors.length)];
 
-    connect();
+    laodGroups();
 });

@@ -3,6 +3,8 @@ package com.web.messanger.model;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,6 +29,7 @@ public class Group {
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatMessage> messages;
 
+    @JsonIgnore
     @ManyToMany()
     @JoinTable(
         name = "group_users",

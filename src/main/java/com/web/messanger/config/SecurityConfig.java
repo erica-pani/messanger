@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .formLogin(form -> form
                     .loginPage("/login")
                     .loginProcessingUrl("/login/check")
-                    .defaultSuccessUrl("/groups", true)
+                    .defaultSuccessUrl("/chat", true)
                     .failureUrl("/login/failed")
                     .permitAll()
                 )

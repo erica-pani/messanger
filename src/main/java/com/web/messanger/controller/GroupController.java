@@ -38,8 +38,8 @@ public class GroupController {
     private UserRepository userRepository;
     
 
-    @GetMapping("")
-    public Collection<Group> getRelevantGroups(@RequestParam String username) {
+    @GetMapping
+    public Collection<Group> getRelevantGroups(@RequestParam("username") String username) {
         Optional<User> user = Optional.ofNullable(userRepository.findByUsername(username));
 
         if (user.isEmpty()) {
@@ -60,12 +60,6 @@ public class GroupController {
 
         throw new EntityNotFoundException("Group not found");
     }
-    
-    
-    @GetMapping("path")
-    public void getGroupMembers() {
-        
-    }
 
     @PostMapping("/create")
     public void createNewGroup(@RequestBody Group group) {
@@ -75,7 +69,7 @@ public class GroupController {
 
 
     @PutMapping("/{groupName}/addGroupMember")
-    public Group addGroupMember(@RequestParam Long id, @PathVariable String groupName, String username) {
+    public Group addGroupMember(@RequestParam Long id, @PathVariable String groupName, @RequestParam String username) {
 
         Optional<Group> group = groupRepository.findById(id);
 
@@ -92,7 +86,7 @@ public class GroupController {
     }
 
     @DeleteMapping("/{groupName}/removeGroupMember")
-    public Group removeGroupMembers(@RequestParam Long id, @PathVariable String groupName, String username) {
+    public Group removeGroupMembers(@RequestParam Long id, @PathVariable String groupName, @RequestParam String username) {
         
         Optional<Group> group = groupRepository.findById(id);
 
@@ -118,10 +112,5 @@ public class GroupController {
         }
 
         throw new EntityNotFoundException("Group does not exist");
-    }
-
-    @PutMapping("/")
-    public void changeGroupParameters() {
-
     }
 }
