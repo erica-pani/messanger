@@ -3,31 +3,37 @@
     <head>
         <meta charset= "utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
         <link rel="stylesheet" th:href="@{/css/groups.css}">
+        <title>Groups</title>
 
         <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 
-        <title>Groups</title>
+        <script th:inline="javascript">
+            const username = /*[[${username}]]*/ "";
+        </script>
+
         <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     </head>
 
-
-
     <body>
         <div class="bodycontainer">
             <header>
-                <span>
-                    <button type="button">
-                        <img src="@{/img/icons/messageSVG.svg}" alt="icon">
-                    </button>
-                </span>
+                <div id="header-wrap">
+                    <span class="header-right-span header-right-span-current">
+                        <button id="message-button" type="button">
+                            <img th:src="@{/img/icons/messageSVG.svg}" alt="icon">
+                        </button>
+                    </span>
+                </div>
             </header>
             <div class="group-and-filter-cont">
                 <header>
                     <div class="header-wrapper">
                         <h3>Messanger</h3>
+                        <button>
+                            <img th:src="@{/img//icons/newGroupIcon.svg}">
+                        </button>
                     </div>
                 </header>
 
@@ -39,11 +45,11 @@
 
                 </div>
 
-                <div class="group-list">
+                <div id="group-list-container" class="group-list">
                     <div class="group">
                         <div class="group-attributes">
                             <div class="group-attributes-wrap">
-                                <h3>Gruppenname</h3>
+                                <h3>Gruppenname1</h3>
                                 <p class="last-send-message">
                                     Letzte Nachricht
                                 </p>
@@ -53,7 +59,7 @@
                     <div class="group">
                         <div class="group-attributes">
                             <div class="group-attributes-wrap">
-                                <h3>Gruppenname</h3>
+                                <h3>Gruppenname2</h3>
                                 <p class="last-send-message">
                                     Letzte Nachricht
                                 </p>
@@ -63,7 +69,7 @@
                     <div class="group">
                         <div class="group-attributes">
                             <div class="group-attributes-wrap">
-                                <h3>Gruppenname</h3>
+                                <h3>Gruppenname3</h3>
                                 <p class="last-send-message">
                                     Letzte Nachricht
                                 </p>
@@ -81,11 +87,11 @@
             <div class="chat-area">
                 <header>
                     <div class="group-attributes-in-header">
-                        <h3>Gruppenname</h3>
+                        <h3  id="groupname">Gruppenname</h3>
                     </div>
                 </header>
                 <div class="chatbox">
-                    <ul class="chat-messages">
+                    <ul id="chat-message-list" class="chat-messages">
                         <li>
                             <div class="message-attributes">
                                 <div>
@@ -125,10 +131,14 @@
                     </ul>
                     <div class="message-input-field">
                         <input id="message-input" type="text" placeholder="Type a message...">
-                        <button>Send</button>
+                        <button>
+                            <img th:src="@{/img//icons/sendMessageIcon.svg}" alt="send">
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
+
+        <script th:src="@{/js/groups.js}" defer></script>
     </body>
 </html>

@@ -1,6 +1,7 @@
 package com.web.messanger.controller;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.web.messanger.model.ChatMessage;
 import com.web.messanger.model.Group;
 import com.web.messanger.model.User;
 import com.web.messanger.repos.GroupRepository;
@@ -36,7 +38,7 @@ public class GroupController {
     private UserRepository userRepository;
     
 
-    @GetMapping("/")
+    @GetMapping("")
     public Collection<Group> getRelevantGroups(@RequestParam String username) {
         Optional<User> user = Optional.ofNullable(userRepository.findByUsername(username));
 
@@ -46,6 +48,19 @@ public class GroupController {
 
         return user.get().getGroups();
     }
+
+    @GetMapping("/{groupName}")
+    public List<ChatMessage> loadGroupChat(@PathVariable String groupName) {
+        
+        Optional<Group> group = Optional.ofNullable(groupRepository.findByName(groupName));
+
+        if (group.isPresent()) {
+            return group.get().getMessages();
+        }
+
+        throw new EntityNotFoundException("Group not found");
+    }
+    
     
     @GetMapping("path")
     public void getGroupMembers() {
