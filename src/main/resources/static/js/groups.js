@@ -25,7 +25,7 @@ function loadChatInfo(groupName) {
         chatMessageList.removeChild(chatMessageList.firstChild);
     }
 
-    fetch('/groups/' + groupName)
+    fetch('/groups/' + encodeURIComponent(groupName))
         .then(res => {
             if(!res.ok) {
                 console.log("Problem");
@@ -70,7 +70,6 @@ function loadGroups() {
             return res.json()
         })
         .then(data => {
-            onConnect(data);
             data.forEach(group => {
                 renderGroups(group);
                 stompClient.subscribe("/topic/public/" + group.name, onMessageReceived);
