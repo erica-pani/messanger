@@ -29,6 +29,7 @@ public class User {
     private String hashed_password;
     private LocalDate birthDate;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
     private List<ChatMessage> messages;
 

@@ -26,6 +26,7 @@ public class Group {
     
     private String name;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatMessage> messages;
 

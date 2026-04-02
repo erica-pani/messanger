@@ -2,8 +2,11 @@
 const groupname = document.querySelector('#groupname');
 const chatMessageList = document.querySelector('#chat-message-list');
 const groupList = document.querySelector('#group-list-container');
+const messageForm = document.querySelector('#message-form');
 
 let stompClient;
+
+let activeGroup;
 
 let chatColor;
 
@@ -33,7 +36,7 @@ function loadChatInfo(groupName) {
         })
         .then(data => {
             data.forEach(message => {
-                renderGroups(message);
+                renderChatMessage(message);
             });
         })
         .catch(error => {
@@ -56,7 +59,7 @@ function renderChatMessage(message) {
     chatMessageList.appendChild(newMessage);
 }
 
-function laodGroups() {
+function loadGroups() {
     fetch('/groups?username=' + username)
         .then(res => {
             if(!res.ok) {
@@ -67,8 +70,10 @@ function laodGroups() {
             return res.json()
         })
         .then(data => {
+            onConnect(data);
             data.forEach(group => {
                 renderGroups(group);
+                stompClient.subscribe("/topic/public/" + group.name, onMessageReceived);
             });
         })
         .catch(error => {
@@ -97,7 +102,45 @@ function renderGroups(group) {
 function connect() {
     const socket = new SockJS('/ws');
     stompClient = Stomp.over(socket);
-    
+
+    stompClient.connect({}, onConnect);
+}
+
+function onConnect() {
+    console.log("WebSocket verbunden");
+
+    loadGroups();
+}
+
+function onMessageReceived(payload) {
+
+    let message = JSON.parse(payload.body);
+
+    if(activeGroup === message.groupName) {
+        renderChatMessage(message);
+    }
+
+    return
+}
+
+function sendMessage(event) {
+    let content = document.querySelector('#message-input').value.trim();
+
+    if(content && stompClient) {
+        let message = {
+            senderName: username,
+            content: content,
+            color: chatColor,
+            groupName: activeGroup,
+        }
+        stompClient.send(
+            '/app/chat.sendMessage',
+            {},
+            JSON.stringify(message)
+        );
+        document.querySelector("#message-input").value = '';
+    }
+    event.preventDefault();
 }
 
 groupList.addEventListener('click', (event) => {
@@ -112,6 +155,8 @@ groupList.addEventListener('click', (event) => {
 
     let groupNameSelected  = clicked.querySelector('h3').textContent;
 
+    activeGroup = groupNameSelected;
+
     groupname.textContent = groupNameSelected;
 
     loadChatInfo(groupNameSelected);
@@ -120,5 +165,7 @@ groupList.addEventListener('click', (event) => {
 document.addEventListener('DOMContentLoaded', () => {
     chatColor = availableColors[Math.floor(Math.random() * availableColors.length)];
 
-    laodGroups();
+    connect();
 });
+
+messageForm.addEventListener('submit', sendMessage);
