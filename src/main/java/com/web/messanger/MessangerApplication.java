@@ -9,7 +9,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import com.web.messanger.model.User;
 import com.web.messanger.repos.UserRepository;
 import com.web.messanger.service.UserService;
-//mysecretpassword
+
 @SpringBootApplication
 public class MessangerApplication {
 

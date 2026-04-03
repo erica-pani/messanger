@@ -256,7 +256,7 @@ html, body {
     content: '';
     height: 40px;
     width: 40px;
-    background-color: aqua;
+    background-color: var(--bubble-color, blue);
     border-radius: 40px;
 
 }
@@ -286,6 +286,7 @@ html, body {
     border-radius: 100px;
     background-color: var(--color-lt-default);
 }
+
 
 .message-input-field button {
     height: 40px;

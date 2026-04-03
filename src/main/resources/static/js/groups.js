@@ -48,9 +48,9 @@ function renderChatMessage(message) {
     const newMessage = document.createElement('li');
 
     newMessage.innerHTML = `
-        <div class="message-attributes">
+        <div class="message-attributes" style="--bubble-color: ${message.color}">
             <div>
-                <h4>${message.senderName}</h4>
+                <h4>${message.sender.username}</h4>
                 <p>${message.content}</p>
             </div>
             <p class="message-time"></p>

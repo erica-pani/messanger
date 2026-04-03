@@ -38,11 +38,10 @@ public class ChatController {
     @MessageMapping("/chat.sendMessage")
     public ChatMessage sendMessage(@Payload ChatMessage message, SimpMessageHeaderAccessor accessor) {
 
-        String username = (String) accessor.getSessionAttributes().get("username");
         String groupName = message.getGroupName();
 
         Optional<Group> group = Optional.ofNullable(groupRepository.findByName(groupName));
-        Optional<User> sender = Optional.ofNullable(userRepository.findByUsername(username));
+        Optional<User> sender = Optional.ofNullable(userRepository.findByUsername(message.getSenderName()));
 
         if (sender.isPresent()  && group.isPresent()) {
             message.setSender(sender.get());

@@ -10,7 +10,13 @@
 
         <script th:inline="javascript">
             const username = /*[[${username}]]*/ "";
+
+            if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("/service-worker.js");
+}
         </script>
+
+        <link rel="manifest" href="/manifest.json">
 
         <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
@@ -32,7 +38,7 @@
                     <div class="header-wrapper">
                         <h3>Messanger</h3>
                         <button>
-                            <img th:src="@{/img//icons/newGroupIcon.svg}">
+                            <img th:src="@{/img/icons/newGroupIcon.svg}">
                         </button>
                     </div>
                 </header>
@@ -46,42 +52,7 @@
                 </div>
 
                 <div id="group-list-container" class="group-list">
-                    <div class="group">
-                        <div class="group-attributes">
-                            <div class="group-attributes-wrap">
-                                <h3>Gruppenname1</h3>
-                                <p class="last-send-message">
-                                    Letzte Nachricht
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="group">
-                        <div class="group-attributes">
-                            <div class="group-attributes-wrap">
-                                <h3>Gruppenname2</h3>
-                                <p class="last-send-message">
-                                    Letzte Nachricht
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="group">
-                        <div class="group-attributes">
-                            <div class="group-attributes-wrap">
-                                <h3>Gruppenname3</h3>
-                                <p class="last-send-message">
-                                    Letzte Nachricht
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="group">
-                        <div class="group-attributes"></div>
-                    </div>
-                    <div class="group">
-                        <div class="group-attributes"></div>
-                    </div>
+                
                 </div>
             </div>
             <div class="chat-area">
@@ -129,14 +100,14 @@
                             </div>
                         </li>
                     </ul>
-                    <div class="message-input-field">
-                        <form id="message-form">
+                    <form id="message-form">
+                        <div class="message-input-field">
                             <input id="message-input" type="text" placeholder="Type a message...">
                             <button type="submit">
-                                <img th:src="@{/img//icons/sendMessageIcon.svg}" alt="send">
+                                <img th:src="@{/img/icons/sendMessageIcon.svg}" alt="send">
                             </button>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
