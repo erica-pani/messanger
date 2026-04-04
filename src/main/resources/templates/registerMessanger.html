@@ -4,7 +4,7 @@
         <meta charset= "utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Registrieren</title>
-        <link rel="stylesheet" href="@{/css/registerMessanger.css}">
+        <link rel="stylesheet" th:href="@{/css/registerMessanger.css}">
     </head>
 
     <body>
@@ -26,7 +26,7 @@
                         <input name="birth-date" class="login-user-input" type="date">
 
                         <div class="stay-logged-in">
-                            <input id="stay-logged-in-chekbox" type="checkbox" name="remember-me"> 
+                            <input id="stay-logged-in-chekbox" type="checkbox"> 
                             <label for="stay-logged-in-chekbox">Ich stimme den <a id="dsgvo" href="">Datenschutzvereinbarungen</a> zu</label> </br>
                         </div>
 
@@ -37,6 +37,6 @@
         </div>
 
 
-        <script src="@{/js/register.js}" defer></script>
+        <script th:src="@{/js/register.js}" defer></script>
     </body>
 </html>

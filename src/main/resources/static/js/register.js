@@ -1,5 +1,5 @@
 
-const registerButton = document.querySelector('#register-button');
+const registerForm = document.querySelector('#register-form');
 
 function register() {
 
@@ -26,7 +26,7 @@ function register() {
         lastname: lastname,
         username: username,
         hashed_password: password,
-        birthdate: birthdate,
+        birthDate: birthdate,
     }
 
     fetch("/user/register", {
@@ -44,7 +44,7 @@ function register() {
     });
 }
 
-registerButton.addEventListener('submit', function(event) {
+registerForm.addEventListener('submit', function(event) {
     event.preventDefault();
 
     register();
