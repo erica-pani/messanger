@@ -59,28 +59,45 @@ function renderChatMessage(message) {
     chatMessageList.appendChild(newMessage);
 }
 
-function loadGroups() {
-    fetch('/groups?username=' + username)
-        .then(res => {
-            if(!res.ok) {
-                console.log("Problem");
-                return
-            }
 
-            return res.json()
-        })
-        .then(data => {
-            data.forEach(group => {
-                renderGroups(group);
-                stompClient.subscribe("/topic/public/" + group.name, onMessageReceived);
-            });
-        })
-        .catch(error => {
-            console.log(error);
-        })
+async function loadGroups() {
+    try {
+        const res = await fetch('/groups?username=' + username);
+
+        if (!res.ok) {
+            console.log("Problem");
+            return;
+        }
+
+        const data = await res.json();
+
+        for (const group of data) {
+            const lastMessage = await getLastMessage(group); 
+            renderGroups(group, lastMessage);
+            stompClient.subscribe("/topic/public/" + group.name, onMessageReceived);
+        }
+
+    } catch (error) {
+        console.log(error);
+    }
 }
 
-function renderGroups(group) {
+
+async function getLastMessage(group) {
+    
+    const res = await fetch('/groups/' + encodeURIComponent(group.name));
+
+    if(!res.ok) {
+        console.log("Problem");
+        return null;
+    }
+
+    const data = await res.json();
+
+    return data.sort((a, b) => b.id - a.id)[0];
+}
+
+function renderGroups(group, lastMessage) {
     
     const newGroup = document.createElement("div");
     newGroup.classList.add("group");
@@ -90,7 +107,7 @@ function renderGroups(group) {
             <div class="group-attributes-wrap">
                  <h3>${group.name}</h3>
                 <p class="last-send-message">
-                    Letzte Nachricht
+                    ${lastMessage.sender.username + ": " + lastMessage.content}
                 </p>
             </div>
         </div>`;

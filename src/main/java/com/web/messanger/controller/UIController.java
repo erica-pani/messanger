@@ -16,7 +16,7 @@ public class UIController {
         return "login";
     }
 
-    @GetMapping("/chat")
+    @GetMapping("/")
     public String getChatPage(Model model, Principal principal){
         model.addAttribute("username", principal.getName());
         return "groups";
@@ -27,5 +27,11 @@ public class UIController {
 
         model.addAttribute("error", "Login fehlgfeschlagen");
         return "login";
+    }
+
+    @GetMapping("/register")
+    public String getRegisterPage(){
+
+        return "registerMessanger";
     }
 }

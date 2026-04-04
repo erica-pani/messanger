@@ -28,13 +28,11 @@ public class UserPrincipal implements UserDetails{
 
     @Override
     public String getPassword() {
-        
         return user.getHashed_password();
     }
 
     @Override
     public String getUsername() {
-        
         return user.getUsername();
     }
     

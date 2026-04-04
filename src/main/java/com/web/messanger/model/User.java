@@ -101,4 +101,12 @@ public class User {
         this.id = id;
     }
 
+    public void setMessages(List<ChatMessage> messages) {
+        this.messages = messages;
+    }
+
+    public void setGroups(Set<Group> groups) {
+        this.groups = groups;
+    }
+
 }

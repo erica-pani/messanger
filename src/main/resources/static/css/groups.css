@@ -1,9 +1,13 @@
 
 :root {
-    --color-default: rgb(31, 31, 31);
-    --color-hover: oklch(from var(--color-default) calc(l + 0.13) c h);
-    --color-border: rgb(158, 158, 158, 0.2);
-    --color-lt-default: oklch(from var(--color-default) calc(l + 0.07) c h);
+    --color-bg: oklch(20% 0.02 260);
+    --color-bg-light: oklch(30% 0.02 260);
+    --color-bg-lighter: oklch(35% 0.02 260);
+    --color-border: oklch(60% 0.01 260 / 0.2);
+    --color-accent: oklch(65% 0.2 300);
+    --color-accent-hover: oklch(75% 0.2 300);
+    --color-text: oklch(95% 0.01 260);
+    --color-text-muted: oklch(80% 0.01 260);
 }
 
 html, body {
@@ -17,14 +21,15 @@ html, body {
     height: 100%;
     width: 100%;
     display: flex;
+    background-color: var(--color-bg);
 }
 
 .bodycontainer header {
     position: relative;
     height: 100%;
     width: 65px;
-    border-right: 1px solid var(--color-border) ;
-    background-color: var(--color-lt-default);
+    background-color: var(--color-bg-light);
+    border-right: 1px solid var(--color-border);
 }
 
 #header-wrap {
@@ -34,9 +39,9 @@ html, body {
     margin: 20px 0;
 
     display: flex;
+    flex-direction: column;
     align-items: center;
     gap: 20px;
-    flex-direction: column;
 }
 
 .header-right-span {
@@ -46,7 +51,7 @@ html, body {
 }
 
 .header-right-span-current {
-   background-color: var(--color-hover);
+   background-color: var(--color-accent);
    border-radius: 50px;
 }
 
@@ -54,10 +59,13 @@ html, body {
     width: 50px;
     height: 50px;
     border-radius: 50px;
-
-    background-color: inherit;
+    background-color: var(--color-bg-lighter);
     border: none;
     cursor: pointer;
+}
+
+#message-button:hover {
+    background-color: var(--color-accent-hover);
 }
 
 #message-button img {
@@ -69,16 +77,15 @@ html, body {
 .group-and-filter-cont {
     min-height: 100%;
     width: 33%;
-    background-color: var(--color-default);
-    border-right: 0.01px solid var(--color-border);
+    background-color: var(--color-bg);
+    border-right: 1px solid var(--color-border);
 }
 
 .group-and-filter-cont header {
     width: 100%;
     height: 60px;
 
-    background-color: var(--color-default);
-    border: none;
+    background-color: var(--color-bg);
 }
 
 .group-and-filter-cont header .header-wrapper {
@@ -93,7 +100,7 @@ html, body {
 .group-and-filter-cont header .header-wrapper h3 {
     position: relative;
     font-size: 1.7rem;
-    color: white;
+    color: var(--color-text);
     margin: 0 auto 0 0;
 }
 
@@ -107,30 +114,28 @@ html, body {
 }
 
 .header-wrapper button:hover {
-    background-color: var(--color-hover);
+    background-color: var(--color-bg-light);
 }
 
 .group-list {
    display: grid;
    gap: 5px;
+   padding-top: 10px;
 }
 
-.group-list .group {
+.group {
     
     height: 76px;
     width: calc(100% - 20px);
     margin: 0 10px;
-
     border-radius: 10px;
+    background-color: inherit;
+    transition: background-color 0.2s;
 }
 
+.group:hover,
 .group-selected {
-    background-color: var(--color-hover);
-}
-
-.group-list .group:hover {
-    background-color: var(--color-hover);
-    transition: 0.2s;
+    background-color: var(--color-bg-light);
 }
 
 .group-list .group .group-attributes {
@@ -141,7 +146,7 @@ html, body {
 
     height: 100%;
     width: 100%;
-    color: white;
+    color: var(--color-text);
 }
 
 .group-attributes::before {
@@ -153,7 +158,7 @@ html, body {
     margin-left: 15px;
 
     border-radius: 50px;
-    background-color: aqua;
+    background-color: var(--color-accent);
 }
 
 .group-attributes-wrap {
@@ -171,36 +176,31 @@ html, body {
 .last-send-message{
     margin: 0;
     padding-bottom: 3px;
-    color: rgb(204, 204, 204);
+    color: var(--color-text-muted);
 }
 
 .chat-area {
     flex: 1;
     display: flex;
     flex-direction: column;
-
     min-height: 100%;
-
-    background-color: var(--color-lt-default);
+    background-color: var(--color-bg-light);
 }
 
 .chat-area header {
     display: flex;
     align-items: center;
-
     height: 60px;
     width: 100%;
-
-    background-color: var(--color-default);
+    background-color: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
 }
 
 .chat-area header::before {
     position: relative;
     display: inline-block;
     content: '';
-
-    background-color: aqua;
-
+    background-color: var(--color-accent);
     height: 40px;
     width: 40px;
     border-radius: 40px;
@@ -213,14 +213,17 @@ html, body {
     padding-left: 15px;
 }
 
+.group-attributes-in-header h3 {
+    color: var(--color-text);
+}
+
 .chatbox {
     flex: 1;
     position: relative;
     width: 100%;
     overflow-y: auto;
     overflow-x: hidden;
-
-    background-color: oklch(from var(--color-default) calc(l + 0.01) c h);
+    background-color: var(--color-bg-light);
     background-image: url(/img/icons/rain.svg);
     background-repeat: repeat;
 }
@@ -242,7 +245,7 @@ html, body {
     padding: 0 0 7px 0;
     margin: 0 auto;
     width: 95%;
-    color: white;
+    color: var(--color-text);
     border-bottom: 1px solid var(--color-border);
 
     display: flex;
@@ -256,9 +259,8 @@ html, body {
     content: '';
     height: 40px;
     width: 40px;
-    background-color: var(--bubble-color, blue);
+    background-color: var(--bubble-color, var(--color-accent));
     border-radius: 40px;
-
 }
 
 .message-attributes h4 {
@@ -270,6 +272,7 @@ html, body {
 .message-attributes p {
     margin: 0 0 7px 0;
     padding: 0;
+    color: var(--color-text-muted)
 }
 
 .message-input-field {
@@ -284,7 +287,8 @@ html, body {
     bottom: 10px;
 
     border-radius: 100px;
-    background-color: var(--color-lt-default);
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
 }
 
 
@@ -293,15 +297,15 @@ html, body {
     width: 40px;
     border-radius: 50%;
     text-align: center;
-
-    background-color: rgb(132, 55, 204);
+    background-color: var(--color-accent);
     border: none;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
 }
 
 .message-input-field button:hover {
-    background-color: oklch(from rgb(132, 55, 204) calc(l + 0.05) c h);
-    scale: 1.03;
-    transition: 0.1s;
+    background-color: var(--color-accent-hover);
+    transform: scale(1.05);
 }
 
 .message-input-field button img{
@@ -313,9 +317,8 @@ html, body {
     flex: 0.986;
     height: 95%;
     border-radius: 100px;
-
     border: none;
     outline: none;
     background-color: inherit;
-    color: white;
+    color: var(--color-text);
 }
