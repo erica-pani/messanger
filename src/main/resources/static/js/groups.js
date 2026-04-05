@@ -6,7 +6,10 @@ const messageForm = document.querySelector('#message-form');
 
 let stompClient;
 
+let groupListOfUser;
 let activeGroup;
+
+let messagesFromDB;
 
 let chatColor;
 
@@ -69,9 +72,9 @@ async function loadGroups() {
             return;
         }
 
-        const data = await res.json();
+        groupListOfUser = await res.json();
 
-        for (const group of data) {
+        for (const group of groupListOfUser) {
             const lastMessage = await getLastMessage(group); 
             renderGroups(group, lastMessage);
             stompClient.subscribe("/topic/public/" + group.name, onMessageReceived);
@@ -100,7 +103,13 @@ async function getLastMessage(group) {
 
 //last message wenn es keine Messages in der Gruppe gibt
 function renderGroups(group, lastMessage) {
-    
+
+    let lastMessageString = "";
+
+    if(lastMessage != null) {
+        lastMessageString = lastMessage.sender.username + ": " + lastMessage.content;
+    } 
+
     const newGroup = document.createElement("div");
     newGroup.classList.add("group");
 
@@ -109,7 +118,7 @@ function renderGroups(group, lastMessage) {
             <div class="group-attributes-wrap">
                  <h3>${group.name}</h3>
                 <p class="last-send-message">
-                    ${lastMessage.sender.username + ": " + lastMessage.content}
+                    ${lastMessageString}
                 </p>
             </div>
         </div>`;
@@ -134,7 +143,13 @@ function onMessageReceived(payload) {
 
     let message = JSON.parse(payload.body);
 
-    if(activeGroup === message.groupName) {
+    groupList.querySelectorAll('.group').forEach(element => {
+        if(element.querySelector('h3').textContent === message.group.name) {
+            element.querySelector('.last-send-message').textContent = message.sender.username + ": " + message.content;;
+        }
+    });
+
+    if(activeGroup.querySelector('h3').textContent === message.groupName) {
         renderChatMessage(message);
     }
 
@@ -149,13 +164,14 @@ function sendMessage(event) {
             senderName: username,
             content: content,
             color: chatColor,
-            groupName: activeGroup,
+            groupName: activeGroup.querySelector('h3').textContent,
         }
         stompClient.send(
             '/app/chat.sendMessage',
             {},
             JSON.stringify(message)
         );
+        activeGroup.querySelector('.last-send-message').textContent = username + ": " + content;
         document.querySelector("#message-input").value = '';
     }
     event.preventDefault();
@@ -173,7 +189,7 @@ groupList.addEventListener('click', (event) => {
 
     let groupNameSelected  = clicked.querySelector('h3').textContent;
 
-    activeGroup = groupNameSelected;
+    activeGroup = clicked;
 
     groupname.textContent = groupNameSelected;
 

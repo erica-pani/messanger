@@ -131,16 +131,23 @@ html, body {
    display: grid;
    gap: 5px;
    padding-top: 10px;
+
+   grid-template-columns: 1fr;
 }
 
 .group {
-    
+    position: relative;
     height: 76px;
-    width: calc(100% - 20px);
+    max-width: calc(100% - 20px);
+    min-width: 0;
     margin: 0 10px;
     border-radius: 10px;
     background-color: inherit;
     transition: background-color 0.2s;
+    display: flex; 
+    align-items: center;
+
+    box-sizing: border-box;
 }
 
 .group:hover,
@@ -148,20 +155,22 @@ html, body {
     background-color: var(--color-bg-light);
 }
 
-.group-list .group .group-attributes {
+.group-attributes {
     display: flex;
     align-items: center;
-    position: relative;
     gap: 20px;
 
     height: 100%;
     width: 100%;
     color: var(--color-text);
+
+    flex: 1;          
+    min-width: 0;     
+    overflow: hidden;
 }
 
 .group-attributes::before {
-    position: relative;
-    display: inline-block;
+    flex-shrink: 0;
     content: '';
     height: 50px;
     width: 50px;
@@ -171,22 +180,40 @@ html, body {
     background-color: var(--color-accent);
 }
 
+.group-attributes::after {
+    content: '';
+    flex-shrink: 0;
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    background-color: red;
+    margin-right: 15px;
+}
+
 .group-attributes-wrap {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     height: 50px;
+    flex: 1;
+    min-width: 0;
 }
 
 .group-attributes-wrap h3 {
     margin: 0;
     padding-top: 3px;
+    min-width: 0;
 }
 
 .last-send-message{
+    min-width: 0;
+    width: 80%;
     margin: 0;
     padding-bottom: 3px;
     color: var(--color-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .chat-area {
