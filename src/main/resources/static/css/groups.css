@@ -17,6 +17,10 @@ html, body {
     overflow-x: hidden;
 }
 
+.hidden {
+    display: none;
+}
+
 .bodycontainer {
     height: 100%;
     width: 100%;
@@ -72,6 +76,12 @@ html, body {
     display: block;
     scale: 0.8;
     color: white;
+}
+
+#create-group-window {
+    width: 33%;
+    background-color: var(--color-bg);
+    border-right: 1px solid var(--color-border);
 }
 
 .group-and-filter-cont {

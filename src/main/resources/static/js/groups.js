@@ -97,6 +97,8 @@ async function getLastMessage(group) {
     return data.sort((a, b) => b.id - a.id)[0];
 }
 
+
+//last message wenn es keine Messages in der Gruppe gibt
 function renderGroups(group, lastMessage) {
     
     const newGroup = document.createElement("div");

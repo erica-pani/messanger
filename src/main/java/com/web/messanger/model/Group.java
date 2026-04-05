@@ -77,5 +77,9 @@ public class Group {
         }
     }
 
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
 
+    
 }
