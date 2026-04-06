@@ -27,17 +27,33 @@
                     </span>
                 </div>
             </header>
-            <form id="create-group-form">
-                <div id="create-group-window" class="hidden">
-                    <input type="text" placeholder="Gruppenname">
+            <div id="create-group-window" class="hidden">
+                <form>
+                    <header>
+                        <div class="header-group-window-wrap">
+                            <h2>Gruppe erstellen</h2>
+                            <button id="close-create-group-window-button" type="button">
+                                &#10005;</button>
+                        </div>
+                    </header>
+                    <div id="create-group-form-wrapper">
+                        <input class="groupname-input" type="text" placeholder="Gruppenname">
 
-                    <div id="possible-groupmember-list">
+                        <div id="possible-member-list">
+                            <div class="possible-member">
+                                <div class="possible-member-attributes">
+                                    <h3>Username</h3>
+                                </div>
+                            </div>
+                            <div class="possible-member">
+                                
+                            </div>
+                        </div>
 
+                        <button type="submit">Erstellen</button>
                     </div>
-
-                    <button type="submit"></button>
-                </div>
-            </form>
+                </form>
+            </div>
             <div class="group-and-filter-cont">
                 <header>
                     <div class="header-wrapper">
