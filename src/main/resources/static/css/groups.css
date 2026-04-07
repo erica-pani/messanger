@@ -191,6 +191,10 @@ html, body {
     margin-right: 15px;
 }
 
+.alert-dot-hidden::after {
+    display: none;
+}
+
 .group-attributes-wrap {
     display: flex;
     flex-direction: column;
@@ -259,8 +263,6 @@ html, body {
     flex: 1;
     position: relative;
     width: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
     background-color: var(--color-bg-light);
     background-image: url(/img/icons/rain.svg);
     background-repeat: repeat;
@@ -269,6 +271,9 @@ html, body {
 .chatbox ul {
     margin: 0;
     padding: 0 0;
+    height: 780px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .chatbox ul li {

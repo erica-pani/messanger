@@ -6,8 +6,8 @@ const messageForm = document.querySelector('#message-form');
 
 let stompClient;
 
-let groupListOfUser;
-let activeGroup;
+let groupListOfUser; // Liste alle Gruppen des Users in json Format
+let activeGroup; // html element .group von der aktiven Gruppe
 
 let messagesFromDB;
 
@@ -24,9 +24,7 @@ const availableColors = [
 
 function loadChatInfo(groupName) {
 
-    while(chatMessageList.firstChild) {
-        chatMessageList.removeChild(chatMessageList.firstChild);
-    }
+    chatMessageList.innerHTML = "";
 
     fetch('/groups/' + encodeURIComponent(groupName))
         .then(res => {
@@ -97,24 +95,21 @@ async function getLastMessage(group) {
 
     const data = await res.json();
 
-    return data.sort((a, b) => b.id - a.id)[0];
+    return data.sort((a, b) => b.id - a.id)[0] || null;
 }
 
 
 //last message wenn es keine Messages in der Gruppe gibt
 function renderGroups(group, lastMessage) {
-
-    let lastMessageString = "";
-
-    if(lastMessage != null) {
-        lastMessageString = lastMessage.sender.username + ": " + lastMessage.content;
-    } 
+    const lastMessageString = lastMessage
+        ? `${lastMessage.sender.username}: ${lastMessage.content}`
+        : "";
 
     const newGroup = document.createElement("div");
     newGroup.classList.add("group");
 
     newGroup.innerHTML = `
-        <div class="group-attributes">
+        <div class="group-attributes alert-dot-hidden">
             <div class="group-attributes-wrap">
                  <h3>${group.name}</h3>
                 <p class="last-send-message">
@@ -144,10 +139,19 @@ function onMessageReceived(payload) {
     let message = JSON.parse(payload.body);
 
     groupList.querySelectorAll('.group').forEach(element => {
-        if(element.querySelector('h3').textContent === message.group.name) {
-            element.querySelector('.last-send-message').textContent = message.sender.username + ": " + message.content;;
+        if (element.querySelector('h3').textContent === message.group.name) {
+
+            element.querySelector('.last-send-message').textContent =
+                `${message.sender.username}: ${message.content}`;
+
+            if (!isActiveGroup(element)) {
+                let groupAttributes = element.querySelector('.group-attributes');
+                groupAttributes.classList.remove('alert-dot-hidden');
+            }
         }
     });
+
+    if(!activeGroup) null;
 
     if(activeGroup.querySelector('h3').textContent === message.groupName) {
         renderChatMessage(message);
@@ -157,24 +161,34 @@ function onMessageReceived(payload) {
 }
 
 function sendMessage(event) {
-    let content = document.querySelector('#message-input').value.trim();
-
-    if(content && stompClient) {
-        let message = {
-            senderName: username,
-            content: content,
-            color: chatColor,
-            groupName: activeGroup.querySelector('h3').textContent,
-        }
-        stompClient.send(
-            '/app/chat.sendMessage',
-            {},
-            JSON.stringify(message)
-        );
-        activeGroup.querySelector('.last-send-message').textContent = username + ": " + content;
-        document.querySelector("#message-input").value = '';
-    }
     event.preventDefault();
+
+    if (!activeGroup) {
+        console.warn("Keine Gruppe ausgewählt");
+        return;
+    }
+
+    const content = document.querySelector('#message-input').value.trim();
+    if (!content || !stompClient) return;
+
+    const message = {
+        senderName: username,
+        content: content,
+        color: chatColor,
+        groupName: activeGroup.querySelector('h3').textContent
+    };
+
+    stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(message));
+
+    activeGroup.querySelector('.last-send-message').textContent =
+        `${username}: ${content}`;
+
+    document.querySelector("#message-input").value = '';
+}
+
+function isActiveGroup(group) {
+    if (!activeGroup) return false;
+    return group.querySelector('h3').textContent === activeGroup.querySelector('h3').textContent;
 }
 
 groupList.addEventListener('click', (event) => {
@@ -186,6 +200,7 @@ groupList.addEventListener('click', (event) => {
     });
 
     clicked.classList.add('group-selected');
+    clicked.querySelector('.group-attributes').classList.add('alert-dot-hidden');
 
     let groupNameSelected  = clicked.querySelector('h3').textContent;
 
