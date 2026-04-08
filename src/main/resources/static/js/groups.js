@@ -5,6 +5,7 @@ const groupList = document.querySelector('#group-list-container');
 const messageForm = document.querySelector('#message-form');
 const startScreen = document.querySelector('.start-screen');
 const chatArea = document.querySelector('.chat-area');
+const chatCache = {};
 
 let stompClient;
 
@@ -28,6 +29,11 @@ function loadChatInfo(groupName) {
 
     chatMessageList.innerHTML = "";
 
+    if(chatCache[groupName]) {
+        chatCache[groupName].forEach(msg => renderChatMessage(msg));
+        return
+    }
+
     fetch('/groups/' + encodeURIComponent(groupName))
         .then(res => {
             if(!res.ok) {
@@ -39,6 +45,8 @@ function loadChatInfo(groupName) {
         })
         .then(data => {
             data.forEach(message => {
+                chatCache[groupName] = data;
+
                 renderChatMessage(message);
             });
         })
@@ -154,6 +162,11 @@ function onMessageReceived(payload) {
     });
 
     if(!activeGroup) null;
+
+    if(!chatCache[message.group.name]) {
+        chatCache[message.group.name] = [];
+    }
+    chatCache[message.group.name].push(message);
 
     if(activeGroup.querySelector('h3').textContent === message.groupName) {
         renderChatMessage(message);
