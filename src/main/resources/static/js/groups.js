@@ -3,6 +3,8 @@ const groupname = document.querySelector('#groupname');
 const chatMessageList = document.querySelector('#chat-message-list');
 const groupList = document.querySelector('#group-list-container');
 const messageForm = document.querySelector('#message-form');
+const startScreen = document.querySelector('.start-screen');
+const chatArea = document.querySelector('.chat-area');
 
 let stompClient;
 
@@ -198,6 +200,9 @@ groupList.addEventListener('click', (event) => {
     document.querySelectorAll('.group').forEach(el => {
         el.classList.remove('group-selected');
     });
+
+    startScreen.classList.add('hidden');
+    chatArea.classList.remove('hidden');
 
     clicked.classList.add('group-selected');
     clicked.querySelector('.group-attributes').classList.add('alert-dot-hidden');
