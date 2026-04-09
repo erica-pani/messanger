@@ -316,10 +316,15 @@ html, body {
 .chatbox ul {
     margin: 0;
     padding: 0 0;
-    height: 780px;
+    height: 760px;
     overflow-y: auto;
     overflow-x: hidden;
 }
+
+#chat-message-list > li:not(:last-child) .message-attributes {
+    border-bottom: 1px solid var(--color-border);
+}
+
 
 .chatbox ul li {
     margin: 0;
@@ -334,7 +339,6 @@ html, body {
     margin: 0 auto;
     width: 95%;
     color: var(--color-text);
-    border-bottom: 1px solid var(--color-border);
 
     display: flex;
     align-items: center;

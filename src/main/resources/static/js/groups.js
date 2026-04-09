@@ -5,14 +5,14 @@ const groupList = document.querySelector('#group-list-container');
 const messageForm = document.querySelector('#message-form');
 const startScreen = document.querySelector('.start-screen');
 const chatArea = document.querySelector('.chat-area');
+const createGroupButton = document.querySelector('#create-group-button');
+const closeGroupButton = document.querySelector('#close-create-group-window-button');
 const chatCache = {};
 
 let stompClient;
 
 let groupListOfUser; // Liste alle Gruppen des Users in json Format
 let activeGroup; // html element .group von der aktiven Gruppe
-
-let messagesFromDB;
 
 let chatColor;
 
@@ -31,7 +31,6 @@ function loadChatInfo(groupName) {
 
     if(chatCache[groupName]) {
         chatCache[groupName].forEach(msg => renderChatMessage(msg));
-        return
     }
 
     fetch('/groups/' + encodeURIComponent(groupName))
@@ -44,11 +43,22 @@ function loadChatInfo(groupName) {
             return res.json()
         })
         .then(data => {
-            data.forEach(message => {
-                chatCache[groupName] = data;
+            const cached = chatCache[groupName] || [];
 
-                renderChatMessage(message);
-            });
+            const merged = [...data, ...cached]
+                .reduce((acc, msg) => {
+                    acc[msg.id] = msg;
+                    return acc;
+                }, {});
+
+            const finalMessages = Object.values(merged)
+                .sort((a, b) => a.id - b.id);
+
+            chatCache[groupName] = finalMessages;
+            chatMessageList.innerHTML = "";
+
+            finalMessages.forEach(msg => renderChatMessage(msg));
+            scrollToBottom();
         })
         .catch(error => {
             console.log(error);
@@ -170,6 +180,7 @@ function onMessageReceived(payload) {
 
     if(activeGroup.querySelector('h3').textContent === message.groupName) {
         renderChatMessage(message);
+        scrollToBottom();
     }
 
     return
@@ -206,6 +217,10 @@ function isActiveGroup(group) {
     return group.querySelector('h3').textContent === activeGroup.querySelector('h3').textContent;
 }
 
+function scrollToBottom() {
+    chatMessageList.scrollTop = chatMessageList.scrollHeight;
+}
+
 groupList.addEventListener('click', (event) => {
     const clicked = event.target.closest('.group');
     if(!clicked) return;
@@ -227,6 +242,7 @@ groupList.addEventListener('click', (event) => {
     groupname.textContent = groupNameSelected;
 
     loadChatInfo(groupNameSelected);
+    setTimeout(scrollToBottom, 50);
 });
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -236,3 +252,19 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 messageForm.addEventListener('submit', sendMessage);
+
+createGroupButton.addEventListener('click', function() {
+    const createGroupWindow = document.querySelector('#create-group-window');
+    const groupAndFilterCont = document.querySelector('.group-and-filter-cont');
+
+    createGroupWindow.classList.remove('hidden');
+    groupAndFilterCont.classList.add('hidden');
+});
+
+closeGroupButton.addEventListener('click', function() {
+    const createGroupWindow = document.querySelector('#create-group-window');
+    const groupAndFilterCont = document.querySelector('.group-and-filter-cont');
+
+    createGroupWindow.classList.add('hidden');
+    groupAndFilterCont.classList.remove('hidden');
+});
