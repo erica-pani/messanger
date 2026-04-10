@@ -23,6 +23,8 @@ public class UserService {
         user.setHashed_password(encoder.encode(user.getHashed_password()));
         user.setMessages(new ArrayList<>());
         user.setGroups(new HashSet<>());
+        user.setFriends(new HashSet<>());
+        user.setFriendOf(new HashSet<>());
         userRepository.save(user);
     }
 }

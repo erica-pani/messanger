@@ -102,15 +102,15 @@ public class GroupController {
     }
 
     @DeleteMapping("/{groupName}/deleteGroup")
-    public Group deleteGroup(@RequestParam Long id, @PathVariable String groupName) {
+    public ResponseEntity<Group> deleteGroup(@RequestParam Long id, @PathVariable String groupName) {
 
         Optional<Group> group = groupRepository.findById(id);
 
         if (group.isPresent() && group.get().getName().equals(groupName)) {
             groupRepository.delete(group.get());
-            return group.get();
+            return ResponseEntity.ok(group.get());
         }
 
-        throw new EntityNotFoundException("Group does not exist");
+        throw new EntityNotFoundException();
     }
 }

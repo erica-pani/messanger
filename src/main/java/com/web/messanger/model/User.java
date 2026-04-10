@@ -5,11 +5,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -36,6 +39,19 @@ public class User {
     @JsonIgnore
     @ManyToMany(mappedBy = "users")
     private Set<Group> groups;
+
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(
+        name = "user_friends",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "friend_id")
+    )
+    Set<User> friends;
+
+    @ManyToMany(mappedBy = "friends")
+    @JsonIgnore
+    private Set<User> friendOf;
 
     public String getFirstname() {
         return firstname;
@@ -107,6 +123,32 @@ public class User {
 
     public void setGroups(Set<Group> groups) {
         this.groups = groups;
+    }
+
+    public Set<User> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(Set<User> friends) {
+        this.friends = friends;
+    }
+
+    public void addFriend(User user) {
+        friends.add(user);
+        user.getFriends().add(user);
+    }
+
+    public void removeFriend(User user) {
+        friends.remove(user);
+        user.getFriends().remove(this);
+    }
+
+    public Set<User> getFriendOf() {
+        return friendOf;
+    }
+
+    public void setFriendOf(Set<User> friendOf) {
+        this.friendOf = friendOf;
     }
 
 }
