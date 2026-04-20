@@ -29,9 +29,11 @@ public class FriendshipRequest {
     @ManyToOne
     private User receiver;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     private RequestStatus requestStatus = RequestStatus.PENDING;
 
+    @Builder.Default
     private LocalTime createdAt = LocalTime.now();
 
 }

@@ -9,6 +9,9 @@ import com.web.messanger.model.User;
 import com.web.messanger.repos.FriendshipRequestRepository;
 import com.web.messanger.repos.UserRepository;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.web.HttpSecurityDslKt;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
 
@@ -29,6 +33,18 @@ public class FriendshipController {
 
     @Autowired
     private FriendshipRequestRepository friendshipRequestRepository;
+
+    @GetMapping("/requests")
+    public ResponseEntity<?> receivedFriendshipRequests(@RequestParam Long id) {
+
+        if (!userRepository.existsById(id)) {
+            return ResponseEntity.badRequest().body("User does not exist");
+        }
+
+        List<FriendshipRequest> requests = new ArrayList<>(friendshipRequestRepository.findAllByReceiverId(id));
+
+        return ResponseEntity.ok(requests);
+    }
     
     @PutMapping("/request/to")
     public ResponseEntity<?> sendFriendshipRequest(@RequestParam Long sender, @RequestParam Long receiver) {

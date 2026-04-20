@@ -1,9 +1,12 @@
 package com.web.messanger.repos;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.web.messanger.model.FriendshipRequest;
+import com.web.messanger.model.User;
 
 public interface FriendshipRequestRepository extends JpaRepository<FriendshipRequest, Long>{
     
@@ -14,4 +17,7 @@ public interface FriendshipRequestRepository extends JpaRepository<FriendshipReq
         OR (fr.sender.id = :receiver AND fr.receiver.id = :sender)
     """)
     boolean existsBetweenUsers(Long sender, Long receiver);
+
+    List<FriendshipRequest> findAllByReceiverId(Long user);
+
 }
