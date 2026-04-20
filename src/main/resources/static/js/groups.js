@@ -7,6 +7,7 @@ const startScreen = document.querySelector('.start-screen');
 const chatArea = document.querySelector('.chat-area');
 const createGroupButton = document.querySelector('#create-group-button');
 const closeGroupButton = document.querySelectorAll('.close-window-button'); 
+const friendRequestButton = document.querySelector('#friendrequest-button');
 const chatCache = {};
 
 let stompClient;
@@ -15,6 +16,8 @@ let groupListOfUser; // Liste alle Gruppen des Users in json Format
 let activeGroup; // html element .group von der aktiven Gruppe
 
 let chatColor;
+
+let activeWindow;
 
 const availableColors = [
     "#3498db", // blau
@@ -221,6 +224,10 @@ function scrollToBottom() {
     chatMessageList.scrollTop = chatMessageList.scrollHeight;
 }
 
+function closeActiveWindow() {
+    activeWindow.classList.add('hidden');
+}
+
 groupList.addEventListener('click', (event) => {
     const clicked = event.target.closest('.group');
     if(!clicked) return;
@@ -254,21 +261,26 @@ document.addEventListener('DOMContentLoaded', () => {
 messageForm.addEventListener('submit', sendMessage);
 
 createGroupButton.addEventListener('click', function() {
-    const createGroupWindow = document.querySelector('#create-group-window');
+    activeWindow = document.querySelector('#create-group-window');
     const groupAndFilterCont = document.querySelector('.group-and-filter-cont');
 
-    createGroupWindow.classList.remove('hidden');
+    activeWindow.classList.remove('hidden');
+    groupAndFilterCont.classList.add('hidden');
+});
+
+friendRequestButton.addEventListener('click', function() {
+    activeWindow = document.querySelector('#friendship-window');
+    const groupAndFilterCont = document.querySelector('.group-and-filter-cont');
+
+    activeWindow.classList.remove('hidden');
     groupAndFilterCont.classList.add('hidden');
 });
 
 closeGroupButton.forEach( button => {
     button.addEventListener('click', function() {
-        const createGroupWindow = document.querySelector('#create-group-window');
         const groupAndFilterCont = document.querySelector('.group-and-filter-cont');
-        const friendships = document.querySelector('#friendship-window');
 
-        createGroupWindow.classList.add('hidden');
-        friendships.classList.add('hidden');
+        closeActiveWindow();
         groupAndFilterCont.classList.remove('hidden');
     });
 })

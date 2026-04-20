@@ -10,6 +10,7 @@
 
         <script th:inline="javascript">
             const username = /*[[${username}]]*/ "";
+            const id = /*[[${id}]]*/ "";
         </script>
 
         <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
@@ -28,6 +29,7 @@
                 </div>
             </header>
             <div id="friendship-window" class="utility-window hidden">
+                <p id="user-id">user id: <span th:text="${id}"></span></p>
                 <form>
                     <header>
                         <div class="header-group-window-wrap">
@@ -93,6 +95,9 @@
                 <header>
                     <div class="header-wrapper">
                         <h3>Messanger</h3>
+                        <button id="friendrequest-button" type="button">
+                            <img th:src="@{/img/icons/addFriendIcon.svg}" alt="friends">
+                        </button>
                         <button id="create-group-button">
                             <img th:src="@{/img/icons/newGroupIcon.svg}">
                         </button>

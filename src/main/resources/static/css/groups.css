@@ -10,6 +10,15 @@
     --color-text-muted: oklch(80% 0.01 260);
 }
 
+#user-id {
+    position: absolute;
+    color: var(--color-text-muted);
+    bottom: 0;
+    right: 0;
+    padding: 0 0;
+    margin: 2px 2px;
+}
+
 html, body {
     height: 100%;
     margin: 0;
@@ -79,6 +88,7 @@ html, body {
 }
 
 .utility-window {
+    position: relative;
     width: 33%;
     background-color: var(--color-bg);
     border-right: 1px solid var(--color-border);
@@ -105,6 +115,7 @@ html, body {
 .group-and-filter-cont header .header-wrapper {
     display: flex;
     align-items: center;
+    gap: 20px;
 
     height: inherit;
     width: 90%;
@@ -125,6 +136,19 @@ html, body {
     border: none;
     cursor: pointer;
     border-radius: 50px;
+    text-align: center;
+
+    display: flex;              /* NEU */
+    align-items: center;        /* NEU */
+    justify-content: center;    /* NEU */
+    padding: 0; 
+}
+
+.header-wrapper button img {
+    height: 27px;               /* NEU – Icon skalieren */
+    width: 27px;                /* NEU */
+    object-fit: contain;        /* NEU */
+    pointer-events: none;       /* optional */
 }
 
 .header-wrapper button:hover {
