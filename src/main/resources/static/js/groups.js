@@ -6,7 +6,7 @@ const messageForm = document.querySelector('#message-form');
 const startScreen = document.querySelector('.start-screen');
 const chatArea = document.querySelector('.chat-area');
 const createGroupButton = document.querySelector('#create-group-button');
-const closeGroupButton = document.querySelector('#close-create-group-window-button');
+const closeGroupButton = document.querySelectorAll('.close-window-button'); 
 const chatCache = {};
 
 let stompClient;
@@ -261,10 +261,14 @@ createGroupButton.addEventListener('click', function() {
     groupAndFilterCont.classList.add('hidden');
 });
 
-closeGroupButton.addEventListener('click', function() {
-    const createGroupWindow = document.querySelector('#create-group-window');
-    const groupAndFilterCont = document.querySelector('.group-and-filter-cont');
+closeGroupButton.forEach( button => {
+    button.addEventListener('click', function() {
+        const createGroupWindow = document.querySelector('#create-group-window');
+        const groupAndFilterCont = document.querySelector('.group-and-filter-cont');
+        const friendships = document.querySelector('#friendship-window');
 
-    createGroupWindow.classList.add('hidden');
-    groupAndFilterCont.classList.remove('hidden');
-});
+        createGroupWindow.classList.add('hidden');
+        friendships.classList.add('hidden');
+        groupAndFilterCont.classList.remove('hidden');
+    });
+})

@@ -78,10 +78,14 @@ html, body {
     color: white;
 }
 
-#create-group-window {
+.utility-window {
     width: 33%;
     background-color: var(--color-bg);
     border-right: 1px solid var(--color-border);
+}
+
+.utility-window.hidden {
+    display: none;
 }
 
 .group-and-filter-cont {
@@ -316,15 +320,10 @@ html, body {
 .chatbox ul {
     margin: 0;
     padding: 0 0;
-    height: 760px;
+    height: 780px;
     overflow-y: auto;
     overflow-x: hidden;
 }
-
-#chat-message-list > li:not(:last-child) .message-attributes {
-    border-bottom: 1px solid var(--color-border);
-}
-
 
 .chatbox ul li {
     margin: 0;
@@ -339,6 +338,7 @@ html, body {
     margin: 0 auto;
     width: 95%;
     color: var(--color-text);
+    border-bottom: 1px solid var(--color-border);
 
     display: flex;
     align-items: center;
@@ -415,14 +415,14 @@ html, body {
     color: var(--color-text);
 }
 
-#create-group-window header{
+.utility-window header{
     width: 100%;
     height: 60px;
     margin-bottom: 10px;
     background-color: inherit;
 }
 
-#create-group-form-wrapper {
+.create-window-wrapper {
     position: relative;
     width: 90%;
     margin: 0 auto;
@@ -449,7 +449,7 @@ html, body {
     margin: 0 auto 0 0;
 }
 
-#close-create-group-window-button {
+.close-window-button {
     position: relative;
     scale: 1.4;
     border: none;
@@ -474,6 +474,86 @@ html, body {
     outline: none;
     border-color: var(--color-accent);
     background-color: oklch(from var(--color-bg) calc(l + 0.05) c h);
+}
+
+#pending-friendship-requests {
+    width: 100%;
+    max-height: 700px;
+    margin-top: 20px;
+
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+.possible-friend {
+    height: 76px;
+    width: 100%;
+    border-radius: 10px;
+
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.possible-friend-attributes {
+    display: flex;
+    align-items: center;
+}
+
+.possible-friend-attributes::before {
+    flex-shrink: 0;
+    display: inline-block;
+    content: '';
+    height: 50px;
+    width: 50px;
+    background-color: var(--color-accent);
+    border-radius: 50%;
+    margin-left: 15px;
+}
+
+.possible-friend-attributes h3 {
+    color: var(--color-text);
+    margin-left: 10px;
+}
+
+.request-button-wrap {
+
+    display: flex;
+    align-items: center;
+}
+
+
+.request-button {
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    margin-left: 10px;
+    background-color: inherit;
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#accept-request-button:hover {
+    background-color: green;
+}
+
+#decline-request-button:hover {
+    background-color: red;
+}
+
+.request-button:active {
+    scale: 0.94;
+}
+
+.possible-friend:hover,
+.possible-friend-selected {
+    background-color: var(--color-bg-light);
 }
 
 #possible-member-list {
@@ -523,7 +603,7 @@ html, body {
     background-color: var(--color-bg-light);
 }
 
-#create-group-form-wrapper button {
+.submit-button {
     width: 250px;
     height: 35px;
     border-radius: 100px;
@@ -536,10 +616,10 @@ html, body {
     transition: background-color 0.2s, transform 0.1s;
 }
 
-#create-group-form-wrapper button:hover {
+.submit-button:hover {
     background-color: var(--color-accent-hover);
 }
 
-#create-group-form-wrapper button:active {
+.submit-button:active {
     transform: scale(0.97);
 }

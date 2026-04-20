@@ -27,16 +27,51 @@
                     </span>
                 </div>
             </header>
-            <div id="create-group-window" class="hidden">
+            <div id="friendship-window" class="utility-window hidden">
+                <form>
+                    <header>
+                        <div class="header-group-window-wrap">
+                            <h2>Freundschaftsanfrage</h2>
+                            <button class="close-window-button" type="button">
+                                &#10005;</button>
+                        </div>
+                    </header>
+                    <div class="create-window-wrapper">
+                        <input class="groupname-input" type="text" placeholder="Nutzer Id">
+
+                        <div id="pending-friendship-requests">
+                            <div class="possible-friend">
+                                <div class="possible-friend-attributes">
+                                    <h3>Username</h3>
+                                    <div class="request-button-wrap">
+                                        <button id="accept-request-button" class="request-button" type="button">
+                                            <img src="/img/icons/checkIcon.svg">
+                                        </button>
+                                        <button id="decline-request-button" class="request-button" type="button">
+                                            <img src="/img/icons/decline.svg">
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="possible-friend">
+                                
+                            </div>
+                        </div>
+
+                        <button class="submit-button" type="submit">Abschicken</button>
+                    </div>
+                </form>
+            </div>
+            <div id="create-group-window" class="utility-window hidden">
                 <form>
                     <header>
                         <div class="header-group-window-wrap">
                             <h2>Gruppe erstellen</h2>
-                            <button id="close-create-group-window-button" type="button">
+                            <button class="close-window-button" type="button">
                                 &#10005;</button>
                         </div>
                     </header>
-                    <div id="create-group-form-wrapper">
+                    <div class="create-window-wrapper">
                         <input class="groupname-input" type="text" placeholder="Gruppenname">
 
                         <div id="possible-member-list">
@@ -50,7 +85,7 @@
                             </div>
                         </div>
 
-                        <button type="submit">Erstellen</button>
+                        <button class="submit-button" type="submit">Erstellen</button>
                     </div>
                 </form>
             </div>
