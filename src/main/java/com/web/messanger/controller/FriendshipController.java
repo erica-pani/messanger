@@ -33,8 +33,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RequestMapping("/friendship")
 public class FriendshipController {
 
-    private final MyUserDetailsService myUserDetailsService;
-
     @Autowired
     private UserRepository userRepository;
 
@@ -43,10 +41,6 @@ public class FriendshipController {
 
     @Autowired
     private FriendshipRepository friendshipRepository;
-
-    FriendshipController(MyUserDetailsService myUserDetailsService) {
-        this.myUserDetailsService = myUserDetailsService;
-    }
 
     @GetMapping("/requests")
     public ResponseEntity<?> receivedFriendshipRequests(@RequestParam Long id) {
