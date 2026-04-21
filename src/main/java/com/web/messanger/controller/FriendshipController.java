@@ -1,11 +1,15 @@
 package com.web.messanger.controller;
 
+import com.web.messanger.service.MyUserDetailsService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.web.messanger.model.Friendship;
 import com.web.messanger.model.FriendshipRequest;
+import com.web.messanger.model.RequestStatus;
 import com.web.messanger.model.User;
+import com.web.messanger.repos.FriendshipRepository;
 import com.web.messanger.repos.FriendshipRequestRepository;
 import com.web.messanger.repos.UserRepository;
 
@@ -28,11 +32,20 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RequestMapping("/friendship")
 public class FriendshipController {
 
+    private final MyUserDetailsService myUserDetailsService;
+
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private FriendshipRequestRepository friendshipRequestRepository;
+
+    @Autowired
+    private FriendshipRepository friendshipRepository;
+
+    FriendshipController(MyUserDetailsService myUserDetailsService) {
+        this.myUserDetailsService = myUserDetailsService;
+    }
 
     @GetMapping("/requests")
     public ResponseEntity<?> receivedFriendshipRequests(@RequestParam Long id) {
@@ -74,5 +87,53 @@ public class FriendshipController {
             friendshipRequestRepository.save(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(request);
+    }
+
+    ///reply = true ist accept und reply = false ist declined
+    public ResponseEntity<?> replyToFriendshipRequest(@RequestParam Long id, @RequestParam Boolean reply) {
+
+        var request = friendshipRequestRepository.findById(id).orElse(null);
+
+        if (request == null) {
+            return ResponseEntity.badRequest().body("Request doesnt exist");
+        }
+
+        if (request.getRequestStatus() != RequestStatus.PENDING) {
+            return ResponseEntity.badRequest().body("This request is already processed");
+        }
+
+        var partner = userRepository.findById(request.getSender().getId());
+        var otherPartner = userRepository.findById(request.getReceiver().getId());
+
+        if (partner.isEmpty() || otherPartner.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Sender or receiver not found");
+        }
+
+        if (reply) {
+            request.setRequestStatus(RequestStatus.ACCEPTED);
+            friendshipRequestRepository.save(request);
+
+            boolean exists = friendshipRepository.existsByUser1AndUser2(partner.get().getId(), otherPartner.get().getId())
+                || friendshipRepository.existsByUser1AndUser2(otherPartner.get().getId() ,partner.get().getId());
+
+            if (!exists) {
+                var friendship = Friendship.builder()
+                        .user1(partner.get())
+                        .user2(otherPartner.get())
+                        .build();
+
+                friendshipRepository.save(friendship);
+            }
+
+            return ResponseEntity.status(HttpStatus.ACCEPTED)
+                .body("Friendship request accepted");
+        } else {
+            request.setRequestStatus(RequestStatus.DECLINED);
+            friendshipRequestRepository.save(request);
+
+            return ResponseEntity.ok("Frienship request declined");
+        }
+
     }
 }

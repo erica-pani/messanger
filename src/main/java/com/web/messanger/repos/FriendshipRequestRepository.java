@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.web.messanger.model.FriendshipRequest;
-import com.web.messanger.model.User;
 
 public interface FriendshipRequestRepository extends JpaRepository<FriendshipRequest, Long>{
     
