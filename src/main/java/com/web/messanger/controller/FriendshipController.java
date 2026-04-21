@@ -25,6 +25,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.web.HttpSecurityDslKt;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
 
@@ -90,6 +91,7 @@ public class FriendshipController {
     }
 
     ///reply = true ist accept und reply = false ist declined
+    @PostMapping("request/reply")
     public ResponseEntity<?> replyToFriendshipRequest(@RequestParam Long id, @RequestParam Boolean reply) {
 
         var request = friendshipRequestRepository.findById(id).orElse(null);
