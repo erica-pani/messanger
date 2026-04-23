@@ -1,6 +1,5 @@
 package com.web.messanger.controller;
 
-import com.web.messanger.service.MyUserDetailsService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,20 +13,14 @@ import com.web.messanger.repos.FriendshipRequestRepository;
 import com.web.messanger.repos.UserRepository;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.config.annotation.web.HttpSecurityDslKt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-
 
 @RestController
 @RequestMapping("/friendship")
@@ -53,8 +46,23 @@ public class FriendshipController {
 
         return ResponseEntity.ok(requests);
     }
+
+    @GetMapping("/friends")
+    public ResponseEntity<?> getMethodName(@RequestParam Long id) {
+        
+        var user = userRepository.findById(id);
+
+        if (user.isEmpty()) {
+            return ResponseEntity.badRequest().body("User with this Id doesnt exist");
+        }
+
+        List<Friendship> friendships = friendshipRepository.findByUser1OrUser2(user.get(), user.get());
+
+        return ResponseEntity.ok(friendships);
+    }
     
-    @PutMapping("/request/to")
+    
+    @PostMapping("/request/to")
     public ResponseEntity<?> sendFriendshipRequest(@RequestParam Long sender, @RequestParam Long receiver) {
 
         if (sender.equals(receiver)) {
