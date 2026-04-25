@@ -39,10 +39,15 @@ public class FriendshipController {
     public ResponseEntity<?> receivedFriendshipRequests(@RequestParam Long id) {
 
         if (!userRepository.existsById(id)) {
+            System.out.println("not found");
             return ResponseEntity.badRequest().body("User does not exist");
         }
 
+        System.out.println("an if vorbei");
+    
         List<FriendshipRequest> requests = new ArrayList<>(friendshipRequestRepository.findAllByReceiverId(id));
+
+        System.out.println("findByreceiver id failed nicht");
 
         return ResponseEntity.ok(requests);
     }

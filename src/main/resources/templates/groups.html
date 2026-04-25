@@ -10,7 +10,10 @@
 
         <script th:inline="javascript">
             const username = /*[[${username}]]*/ "";
+            const id = /*[[${#authentication.principal.id}]]*/ 0;
         </script>
+
+        <script type="module" th:src="@{/js/friendships.js}"></script>
 
         <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
@@ -28,7 +31,7 @@
                 </div>
             </header>
             <div id="friendship-window" class="utility-window hidden">
-                <p id="user-id">user id: <span th:text="${#authentication.principal.id}"></span></p>
+                <p id="user-id">user id: <span th:text="${id}"></span></p>
                 <form id="friendship-form">
                     <header>
                         <div class="header-group-window-wrap">
@@ -41,22 +44,7 @@
                         <input id="requested-id" class="groupname-input" type="text" placeholder="Nutzer Id">
 
                         <div id="pending-friendship-requests">
-                            <div class="possible-friend">
-                                <div class="possible-friend-attributes">
-                                    <h3>Username</h3>
-                                    <div class="request-button-wrap">
-                                        <button id="accept-request-button" class="request-button" type="button">
-                                            <img src="/img/icons/checkIcon.svg">
-                                        </button>
-                                        <button id="decline-request-button" class="request-button" type="button">
-                                            <img src="/img/icons/decline.svg">
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="possible-friend">
-                                
-                            </div>
+                            
                         </div>
 
                         <button class="submit-button" type="submit">Abschicken</button>
@@ -148,6 +136,5 @@
         </div>
 
         <script th:src="@{/js/groups.js}" defer></script>
-        <script th:src="@{/js/friendships.js}" defer></script>
     </body>
 </html>
