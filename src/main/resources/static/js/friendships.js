@@ -54,9 +54,25 @@ async function loadRequests() {
     });
 }
 
-function replyToRequest() {
+function replyToRequest(button) {
 
-    
+    const acceptBtn = button.target.closest(".accept-request-button");
+    const declineBtn = button.target.closest(".decline-request-button");
+
+    if (!acceptBtn && !declineBtn) {
+        return;
+    }
+
+    const parent = button.target.closest(".possible-friend");
+    const requestId = parent.querySelector('input[name="requestId"]').value;
+
+    const reply = acceptBtn ? true : false;
+
+    const url = `/friendship/request/reply?id=${requestId}&reply=${reply}`;
+
+    fetchData(url, 'POST', null);
+
+    parent.remove();
 }
 
 function renderRequests(request) {
@@ -64,13 +80,15 @@ function renderRequests(request) {
 
     newRequest.innerHTML = `
         <div class="possible-friend">
+            <input name="requestId" type="hidden" value="${request.id}">
+
             <div class="possible-friend-attributes">
                 <h3>${request.sender.username}</h3>
                 <div class="request-button-wrap">
-                    <button id="accept-request-button" class="request-button" type="button">
+                    <button class="request-button accept-request-button" type="button">
                         <img src="/img/icons/checkIcon.svg">
                     </button>
-                    <button id="decline-request-button" class="request-button" type="button">
+                    <button class="request-button decline-request-button" type="button">
                         <img src="/img/icons/decline.svg">
                     </button>
                 </div>
@@ -82,6 +100,7 @@ function renderRequests(request) {
 }
 
 friendRequestButton.addEventListener('click', loadRequests);
+
 friendshipForm.addEventListener('submit', function(event) {
     event.preventDefault();
 
@@ -89,5 +108,11 @@ friendshipForm.addEventListener('submit', function(event) {
         const id = requestedId.value.trim();
         
         sendFriendshipRequest(id);
+
+        requestedId.textContent = "";
     }
+});
+
+document.addEventListener('click', button => {
+    replyToRequest(button);
 });

@@ -563,11 +563,11 @@ html, body {
     justify-content: center;
 }
 
-#accept-request-button:hover {
+.accept-request-button:hover {
     background-color: green;
 }
 
-#decline-request-button:hover {
+.decline-request-button:hover {
     background-color: red;
 }
 

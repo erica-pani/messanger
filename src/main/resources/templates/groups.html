@@ -31,7 +31,7 @@
                 </div>
             </header>
             <div id="friendship-window" class="utility-window hidden">
-                <p id="user-id">user id: <span th:text="${id}"></span></p>
+                <p id="user-id">user id: <span th:text="${#authentication.principal.id}"></span></p>
                 <form id="friendship-form">
                     <header>
                         <div class="header-group-window-wrap">

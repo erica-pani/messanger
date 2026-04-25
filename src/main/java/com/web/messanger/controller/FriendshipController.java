@@ -39,15 +39,13 @@ public class FriendshipController {
     public ResponseEntity<?> receivedFriendshipRequests(@RequestParam Long id) {
 
         if (!userRepository.existsById(id)) {
-            System.out.println("not found");
             return ResponseEntity.badRequest().body("User does not exist");
         }
 
-        System.out.println("an if vorbei");
-    
-        List<FriendshipRequest> requests = new ArrayList<>(friendshipRequestRepository.findAllByReceiverId(id));
-
-        System.out.println("findByreceiver id failed nicht");
+        List<FriendshipRequest> requests = friendshipRequestRepository.findAllByReceiverId(id)
+                                                .stream()
+                                                .filter(request -> request.getRequestStatus() == RequestStatus.PENDING)
+                                                .toList();
 
         return ResponseEntity.ok(requests);
     }
@@ -98,7 +96,7 @@ public class FriendshipController {
     }
 
     ///reply = true ist accept und reply = false ist declined
-    @PostMapping("request/reply")
+    @PostMapping("/request/reply")
     public ResponseEntity<?> replyToFriendshipRequest(@RequestParam Long id, @RequestParam Boolean reply) {
 
         var request = friendshipRequestRepository.findById(id).orElse(null);
