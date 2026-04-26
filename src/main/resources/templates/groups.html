@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+    <head>
+        <meta charset= "utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" th:href="@{/css/groups.css}">
+        <title>Groups</title>
+
+        <link rel="icon" type="image/svg+xml" href="/img/icons/favicon.svg">
+
+        <script th:inline="javascript">
+            const username = /*[[${username}]]*/ "";
+            const id = /*[[${#authentication.principal.id}]]*/ 0;
+        </script>
+
+        <script type="module" th:src="@{/js/friendships.js}"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    </head>
+
+    <body>
+        <div class="bodycontainer">
+            <header>
+                <div id="header-wrap">
+                    <span class="header-right-span header-right-span-current">
+                        <button id="message-button" type="button">
+                            <img th:src="@{/img/icons/messageSVG.svg}" alt="icon">
+                        </button>
+                    </span>
+                </div>
+            </header>
+            <div id="friendship-window" class="utility-window hidden">
+                <p id="user-id">user id: <span th:text="${#authentication.principal.id}"></span></p>
+                <form id="friendship-form">
+                    <header>
+                        <div class="header-group-window-wrap">
+                            <h2>Freundschaftsanfrage</h2>
+                            <button class="close-window-button" type="button">
+                                &#10005;</button>
+                        </div>
+                    </header>
+                    <div class="create-window-wrapper">
+                        <input id="requested-id" class="groupname-input" type="text" placeholder="Nutzer Id">
+
+                        <div id="pending-friendship-requests">
+                            
+                        </div>
+
+                        <button class="submit-button" type="submit">Abschicken</button>
+                    </div>
+                </form>
+            </div>
+            <div id="create-group-window" class="utility-window hidden">
+                <form>
+                    <header>
+                        <div class="header-group-window-wrap">
+                            <h2>Gruppe erstellen</h2>
+                            <button class="close-window-button" type="button">
+                                &#10005;</button>
+                        </div>
+                    </header>
+                    <div class="create-window-wrapper">
+                        <input class="groupname-input" type="text" placeholder="Gruppenname">
+
+                        <div id="possible-member-list">
+                            <div class="possible-member">
+                                <div class="possible-member-attributes">
+                                    <h3>Username</h3>
+                                </div>
+                            </div>
+                            <div class="possible-member">
+                                
+                            </div>
+                        </div>
+
+                        <button class="submit-button" type="submit">Erstellen</button>
+                    </div>
+                </form>
+            </div>
+            <div class="group-and-filter-cont">
+                <header>
+                    <div class="header-wrapper">
+                        <h3>Messanger</h3>
+                        <button id="friendrequest-button" type="button">
+                            <img th:src="@{/img/icons/addFriendIcon.svg}" alt="friends">
+                        </button>
+                        <button id="create-group-button">
+                            <img th:src="@{/img/icons/newGroupIcon.svg}">
+                        </button>
+                    </div>
+                </header>
+
+                <div class="search-bar">
+
+                </div>
+
+                <div class="filter-list">
+
+                </div>
+
+                <div id="group-list-container" class="group-list">
+                
+                </div>
+            </div>
+            <div class="start-screen">
+                <header>
+                    <h2>Wilkommen</h2>
+                </header>
+                <div class="start-screen-flex">
+                    <div class="content-box">
+
+                    </div>
+                </div>
+            </div>
+            <div class="chat-area hidden">
+                <header>
+                    <div class="group-attributes-in-header">
+                        <h3  id="groupname">Gruppenname</h3>
+                    </div>
+                </header>
+                <div class="chatbox">
+                    <ul id="chat-message-list" class="chat-messages">
+                        
+                    </ul>
+                    <form id="message-form">
+                        <div class="message-input-field">
+                            <input id="message-input" type="text" placeholder="Type a message...">
+                            <button type="submit">
+                                <img th:src="@{/img/icons/sendMessageIcon.svg}" alt="send">
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script th:src="@{/js/groups.js}" defer></script>
+    </body>
+</html>
