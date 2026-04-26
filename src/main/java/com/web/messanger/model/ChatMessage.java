@@ -13,7 +13,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -22,24 +21,24 @@ import lombok.Setter;
 @Entity
 public class ChatMessage {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
-    
-    private String content;
+  @Id
+  @GeneratedValue(strategy = GenerationType.SEQUENCE)
+  private Long id;
 
-    @Transient
-    private String senderName;
-    
-    private String time;
-    private String color;
+  private String content;
 
-    @ManyToOne()
-    @JoinColumn(name = "sender_id")
-    private User sender;
+  @Transient private String senderName;
 
-    @ManyToOne
-    @JoinColumn(name = "group_id")
-    private Group group;
+  @Transient private String groupName;
 
+  private String time;
+  private String color;
+
+  @ManyToOne()
+  @JoinColumn(name = "sender_id")
+  private User sender;
+
+  @ManyToOne
+  @JoinColumn(name = "group_id")
+  private Group group;
 }

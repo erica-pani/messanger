@@ -1,54 +1,76 @@
 package com.web.messanger.controller;
 
+import com.web.messanger.model.ChatMessage;
+import com.web.messanger.model.Group;
+import com.web.messanger.model.User;
+import com.web.messanger.repos.GroupRepository;
+import com.web.messanger.repos.MessageRepository;
+import com.web.messanger.repos.UserRepository;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
-
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
-
-import com.web.messanger.model.ChatMessage;
-import com.web.messanger.model.User;
-import com.web.messanger.repos.UserRepository;
 
 @Controller
 public class ChatController {
 
-    @Autowired
-    private UserRepository userRepository;
-    
+  private final UserRepository userRepository;
 
-    @MessageMapping("/chat.sendMessage")
-    @SendTo("/topic/public")
-    public ChatMessage sendMessage(@Payload ChatMessage message, SimpMessageHeaderAccessor accessor) {
+  private final SimpMessageSendingOperations messageTemplate;
 
-        String username = (String) accessor.getSessionAttributes().get("username");
+  private final MessageRepository messageRepository;
 
-        Optional<User> sender = Optional.ofNullable(userRepository.findByUsername(username));
+  private final GroupRepository groupRepository;
 
-        if (sender.isPresent()) {
-            message.setSender(sender.get());
-        } else {
-            throw new UsernameNotFoundException("User not found");
-        }
-        
-        message.setTime(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
+  public ChatController(
+      UserRepository userRepository,
+      SimpMessageSendingOperations messageTemplate,
+      MessageRepository messageRepository,
+      GroupRepository groupRepository) {
+    this.userRepository = userRepository;
+    this.messageTemplate = messageTemplate;
+    this.messageRepository = messageRepository;
+    this.groupRepository = groupRepository;
+  }
 
-        return message;
+  @MessageMapping("/chat.sendMessage")
+  public ChatMessage sendMessage(@Payload ChatMessage message, SimpMessageHeaderAccessor accessor) {
+
+    String groupName = message.getGroupName();
+
+    Optional<Group> group = Optional.ofNullable(groupRepository.findByName(groupName));
+    Optional<User> sender =
+        Optional.ofNullable(userRepository.findByUsername(message.getSenderName()));
+
+    if (sender.isPresent() && group.isPresent()) {
+      message.setSender(sender.get());
+      message.setGroup(group.get());
+    } else {
+      throw new UsernameNotFoundException("User not found");
     }
-    
-    @MessageMapping("/chat.addUser")
-    @SendTo("/topic/public")
-    public ChatMessage addUser(@Payload ChatMessage message, SimpMessageHeaderAccessor accessor) {
 
-        message.setTime(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
-        accessor.getSessionAttributes().put("username", message.getSenderName());
-        return message;
-    }
+    message.setTime(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
+
+    messageTemplate.convertAndSend("/topic/public/" + message.getGroup().getName(), message);
+
+    messageRepository.save(message);
+
+    return message;
+  }
+
+  @MessageMapping("/chat.addUser")
+  public ChatMessage addUser(@Payload ChatMessage message, SimpMessageHeaderAccessor accessor) {
+
+    message.setTime(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
+    accessor.getSessionAttributes().put("username", message.getSenderName());
+
+    messageTemplate.convertAndSend("/topic/public/" + message.getGroup().getName(), message);
+
+    return message;
+  }
 }

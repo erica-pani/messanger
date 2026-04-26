@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+    <head>
+        <meta charset= "utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Registrieren</title>
+        <link rel="stylesheet" th:href="@{/css/registerMessanger.css}">
+    </head>
+
+    <body>
+        <div class="bodycontainer">
+            <div class="logincontainer">
+                <div class="logincontainer-wrapper">
+                    <form id="register-form">
+                        <h1>Registrieren</h1>
+
+                        <input name="firstname" class="login-user-input" type="text" placeholder="Vorname">
+                        <input name="lastname" class="login-user-input" type="text" placeholder="Nachname">
+
+                        <input name="username" class="login-user-input" type="text" placeholder="Nutzername"> </br>
+
+                        <input name="password" class="login-user-input" type="password" placeholder="Passwort"> </br>
+
+                        <input name="password-second-time" class="login-user-input" type="password" minlength="6" placeholder="Passwort wiederholen" required>
+
+                        <input name="birth-date" class="login-user-input" type="date" required>
+
+                        <div class="stay-logged-in">
+                            <input id="stay-logged-in-chekbox" type="checkbox"> 
+                            <label for="stay-logged-in-chekbox">Ich stimme den <a id="dsgvo" href="">Datenschutzvereinbarungen</a> zu</label> </br>
+                        </div>
+
+                        <button id="register-button" class="login-button" type="submit">Registrieren</button> </br>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+        <script th:src="@{/js/register.js}" defer></script>
+    </body>
+</html>

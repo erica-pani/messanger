@@ -1,58 +1,85 @@
 package com.web.messanger.config;
 
+import com.web.messanger.service.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
-import com.web.messanger.service.MyUserDetailsService;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final int STRENGTH = 10;
+  private final int STRENGTH = 10;
 
-    @Autowired
-    private MyUserDetailsService userDetailsService;
-    
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+  @Autowired private MyUserDetailsService userDetailsService;
 
-        return http
-                .csrf(customizer -> customizer.disable())
-                .authorizeHttpRequests(request -> request
-                    .requestMatchers("/login", "/login/check", "/css/**").permitAll()
-                    .anyRequest().authenticated())
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-                .formLogin(form -> form
-                    .loginPage("/login")
-                    .loginProcessingUrl("/login/check")
-                    .defaultSuccessUrl("/chat", true)
-                    .failureUrl("/login/failed")
+    return http.cors(Customizer.withDefaults())
+        .csrf(customizer -> customizer.disable())
+        .authorizeHttpRequests(
+            request ->
+                request
+                    .requestMatchers(
+                        "/login",
+                        "/login/check",
+                        "/register",
+                        "/user/register",
+                        "/js/**",
+                        "/css/**",
+                        "/images/**",
+                        "/favicon.ico",
+                        "/manifest.json",
+                        "/service-worker.js")
                     .permitAll()
-                )
+                    .anyRequest()
+                    .authenticated())
+        .formLogin(
+            form ->
+                form.loginPage("/login")
+                    .loginProcessingUrl("/login/check")
+                    .defaultSuccessUrl("/", true)
+                    .failureUrl("/login/failed")
+                    .permitAll())
+        .rememberMe(remember -> remember.key("verifyer").tokenValiditySeconds(60 * 60 * 24 * 30))
+        .logout(logout -> logout.logoutUrl("/logout").deleteCookies("remember-me").permitAll())
+        .authenticationProvider(authenticationProvider())
+        .build();
+  }
 
-                .authenticationProvider(authenticationProvider())
+  @Bean
+  public AuthenticationProvider authenticationProvider() {
+    DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
+    provider.setPasswordEncoder(new BCryptPasswordEncoder(STRENGTH));
+    return provider;
+  }
 
-                .build();
-    }
+  @Bean
+  public BCryptPasswordEncoder bCryptPasswordEncoder() {
+    return new BCryptPasswordEncoder(STRENGTH);
+  }
 
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
-        provider.setPasswordEncoder(new BCryptPasswordEncoder(STRENGTH));
-        return provider;
-    }
+  @Bean
+  public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration config = new CorsConfiguration();
+    config.setAllowCredentials(true);
+    config.addAllowedOriginPattern("*"); // oder spezifisch: "https://*.ngrok.io"
+    config.addAllowedMethod("*");
+    config.addAllowedHeader("*");
 
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder(STRENGTH);
-    }
-
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", config);
+    return source;
+  }
 }

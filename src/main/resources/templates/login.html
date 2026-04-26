@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Login Page</title>
         <link rel="stylesheet" th:href="@{/css/login.css}">
+
     </head>
 
     <body>
@@ -19,13 +20,14 @@
 
                     <input name="password" id="password" class="login-user-input" type="password" placeholder="password"> </br>
 
-                    <div th:if="${param.error}">
-                        <p style="color:red;">Login fehlgeschlagen</p> </br>
+                    <div class="stay-logged-in">
+                        <input id="stay-logged-in-chekbox" type="checkbox" name="remember-me"> 
+                        <label for="stay-logged-in-chekbox">Angemeldet bleiben</label> </br>
                     </div>
 
                     <button class="login-button" type="submit">Login</button> </br>
 
-                    <a id="register" href="">Registrieren &#8594;</a>
+                    <a id="register" th:href="@{/register}">Registrieren &#8594;</a>
                     </form>
                 </div>
             </div>
