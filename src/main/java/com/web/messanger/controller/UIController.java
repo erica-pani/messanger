@@ -1,37 +1,35 @@
 package com.web.messanger.controller;
 
 import java.security.Principal;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-
 @Controller
 public class UIController {
-    
-    @GetMapping("/login")
-    public String getLoginPage(){
 
-        return "login";
-    }
+  @GetMapping("/login")
+  public String getLoginPage() {
 
-    @GetMapping("/")
-    public String getChatPage(Model model, Principal principal){
-        model.addAttribute("username", principal.getName());
-        return "groups";
-    }
+    return "login";
+  }
 
-    @GetMapping("/login/failed")
-    public String getLoginPageFailed(Model model){
+  @GetMapping("/")
+  public String getChatPage(Model model, Principal principal) {
+    model.addAttribute("username", principal.getName());
+    return "groups";
+  }
 
-        model.addAttribute("error", "Login fehlgfeschlagen");
-        return "login";
-    }
+  @GetMapping("/login/failed")
+  public String getLoginPageFailed(Model model) {
 
-    @GetMapping("/register")
-    public String getRegisterPage(){
+    model.addAttribute("error", "Login fehlgfeschlagen");
+    return "login";
+  }
 
-        return "registerMessanger";
-    }
+  @GetMapping("/register")
+  public String getRegisterPage() {
+
+    return "registerMessanger";
+  }
 }

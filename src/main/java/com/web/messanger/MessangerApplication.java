@@ -6,20 +6,20 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class MessangerApplication {
 
-	public static void main(String[] args) {
+  public static void main(String[] args) {
 
-		SpringApplication.run(MessangerApplication.class, args);
+    SpringApplication.run(MessangerApplication.class, args);
 
-		/*
-		max123 
-		pass1
+    /*
+    max123
+    pass1
 
-		anna_s
-		pass2
+    anna_s
+    pass2
 
-		tommy
-		pass3
-		*/
+    tommy
+    pass3
+    */
 
-	}
+  }
 }

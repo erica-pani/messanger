@@ -1,7 +1,5 @@
 package com.web.messanger.model;
 
-import java.time.LocalTime;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -9,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import java.time.LocalTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,22 +21,18 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FriendshipRequest {
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
 
-    @ManyToOne
-    private User sender;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long id;
 
-    @ManyToOne
-    private User receiver;
+  @ManyToOne private User sender;
 
-    @Builder.Default
-    @Enumerated(EnumType.STRING)
-    private RequestStatus requestStatus = RequestStatus.PENDING;
+  @ManyToOne private User receiver;
 
-    @Builder.Default
-    private LocalTime createdAt = LocalTime.now();
+  @Builder.Default
+  @Enumerated(EnumType.STRING)
+  private RequestStatus requestStatus = RequestStatus.PENDING;
 
+  @Builder.Default private LocalTime createdAt = LocalTime.now();
 }
