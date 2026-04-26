@@ -31,12 +31,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequestMapping("/groups")
 public class GroupController {
 
-    @Autowired
-    private GroupRepository groupRepository;
+    private final GroupRepository groupRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     
+    public GroupController(GroupRepository groupRepository, UserRepository userRepository) {
+        this.userRepository = userRepository;
+        this.groupRepository = groupRepository;
+    }
 
     @GetMapping
     public Collection<Group> getRelevantGroups(@RequestParam("username") String username) {

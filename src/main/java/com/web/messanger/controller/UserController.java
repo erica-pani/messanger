@@ -1,6 +1,5 @@
 package com.web.messanger.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.web.messanger.model.User;
@@ -15,8 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RestController
 public class UserController {
     
-    @Autowired
-    private UserService service;
+    private final UserService service;
+
+    public UserController(UserService service) {
+        this.service = service;
+    }
 
     @PostMapping("/register")
     public void register(@RequestBody User user) {

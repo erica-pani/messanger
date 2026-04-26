@@ -12,11 +12,9 @@ import com.web.messanger.repos.FriendshipRepository;
 import com.web.messanger.repos.FriendshipRequestRepository;
 import com.web.messanger.repos.UserRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,14 +24,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 @RequestMapping("/friendship")
 public class FriendshipController {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private FriendshipRequestRepository friendshipRequestRepository;
+    private final FriendshipRequestRepository friendshipRequestRepository;
 
-    @Autowired
-    private FriendshipRepository friendshipRepository;
+    private final FriendshipRepository friendshipRepository;
+
+    public FriendshipController(
+            UserRepository userRepository, 
+            FriendshipRequestRepository friendshipRequestRepository, 
+            FriendshipRepository friendshipRepository) {
+        this.userRepository = userRepository;
+        this.friendshipRequestRepository = friendshipRequestRepository;
+        this.friendshipRepository = friendshipRepository;
+    }
 
     @GetMapping("/requests")
     public ResponseEntity<?> receivedFriendshipRequests(@RequestParam Long id) {

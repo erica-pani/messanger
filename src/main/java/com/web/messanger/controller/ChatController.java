@@ -4,8 +4,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -23,17 +21,24 @@ import com.web.messanger.repos.UserRepository;
 @Controller
 public class ChatController {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private SimpMessageSendingOperations messageTemplate;
+    private final SimpMessageSendingOperations messageTemplate;
 
-    @Autowired
-    private MessageRepository messageRepository;
+    private final MessageRepository messageRepository;
+ 
+    private final GroupRepository groupRepository;
 
-    @Autowired 
-    private GroupRepository groupRepository;
+    public ChatController(
+            UserRepository userRepository,
+            SimpMessageSendingOperations messageTemplate,
+            MessageRepository messageRepository,
+            GroupRepository groupRepository) {
+        this.userRepository = userRepository;
+        this. messageTemplate = messageTemplate;
+        this.messageRepository = messageRepository;
+        this.groupRepository = groupRepository;
+    }
     
     @MessageMapping("/chat.sendMessage")
     public ChatMessage sendMessage(@Payload ChatMessage message, SimpMessageHeaderAccessor accessor) {
@@ -70,9 +75,4 @@ public class ChatController {
         return message;
     }
 
-
-    @Autowired
-    public void setRepository(MessageRepository messageRepository) {
-        this.messageRepository = messageRepository;
-    }
 }
