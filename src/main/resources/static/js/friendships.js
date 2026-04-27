@@ -3,6 +3,8 @@ const friendshipForm = document.querySelector('#friendship-form');
 const requestedId = document.querySelector('#requested-id');
 const requestList = document.querySelector('#pending-friendship-requests');
 const friendRequestButton = document.querySelector('#friendrequest-button');
+const createGroupButton = document.querySelector('#create-group-button');
+const possibleMemberList = document.querySelector('#possible-member-list');
 
 //polling von requests damit es aktuell bleibt
 async function sendFriendshipRequest(requestToInId) {
@@ -54,6 +56,30 @@ async function loadRequests() {
     });
 }
 
+async function loadFriends() {
+    const url = `/friendship/friends?id=${id}`;
+
+    const friendships = await fetchData(url, 'GET', null);
+
+    if (!friendships) {
+        return
+    }
+
+    console.log(friendships);
+
+    possibleMemberList.innerHTML = "";
+
+    friendships.forEach(friendship => {
+        if (friendship.user1.id == id) {
+
+            renderPossibleMember(friendship.user2);
+
+        } else {
+            renderPossibleMember(friendship.user1);
+        }
+    });
+}
+
 function replyToRequest(button) {
 
     const acceptBtn = button.target.closest(".accept-request-button");
@@ -73,6 +99,22 @@ function replyToRequest(button) {
     fetchData(url, 'POST', null);
 
     parent.remove();
+}
+
+function renderPossibleMember(possibleMember) {
+
+    const newPossibleMember = document.createElement('div');
+
+    newPossibleMember.classList.add('possible-member');
+
+    newPossibleMember.innerHTML = `
+            <input name="friendId" type="hidden" value="${possibleMember.id}">
+
+            <div class="possible-member-attributes">
+                <h3>${possibleMember.username}</h3>
+             </div>`
+
+    possibleMemberList.appendChild(newPossibleMember);
 }
 
 function renderRequests(request) {
@@ -109,9 +151,11 @@ friendshipForm.addEventListener('submit', function(event) {
         
         sendFriendshipRequest(id);
 
-        requestedId.textContent = "";
+        requestedId.value = "";
     }
 });
+
+createGroupButton.addEventListener('click', loadFriends);
 
 document.addEventListener('click', button => {
     replyToRequest(button);
