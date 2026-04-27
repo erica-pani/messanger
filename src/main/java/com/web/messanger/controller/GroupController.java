@@ -2,13 +2,17 @@ package com.web.messanger.controller;
 
 import com.web.messanger.model.ChatMessage;
 import com.web.messanger.model.Group;
+import com.web.messanger.model.GroupDTO;
 import com.web.messanger.model.User;
 import com.web.messanger.repos.GroupRepository;
 import com.web.messanger.repos.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -58,9 +62,28 @@ public class GroupController {
   }
 
   @PostMapping("/create")
-  public void createNewGroup(@RequestBody Group group) {
+  public ResponseEntity<?> createNewGroup(@RequestBody GroupDTO groupdto) {
+
+    Group group = new Group();
+    Set<User> memberList = new HashSet<>();
+
+    for (Long id : groupdto.getUserIds()) {
+      var user = userRepository.findById(id);
+
+      if (user.isEmpty()) {
+        return ResponseEntity.badRequest().body("User does not exist");
+      }
+
+      memberList.add(user.get());
+    }
+
+    group.setName(groupdto.getName());
+    group.setMessages(new ArrayList<>());
+    group.setUsers(memberList);
 
     groupRepository.save(group);
+
+    return ResponseEntity.ok(group);
   }
 
   @PutMapping("/{groupName}/addGroupMember")

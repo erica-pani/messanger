@@ -5,6 +5,9 @@ const requestList = document.querySelector('#pending-friendship-requests');
 const friendRequestButton = document.querySelector('#friendrequest-button');
 const createGroupButton = document.querySelector('#create-group-button');
 const possibleMemberList = document.querySelector('#possible-member-list');
+const createGroupForm = document.querySelector('#create-group-form');
+
+const groupMemberList = [];
 
 //polling von requests damit es aktuell bleibt
 async function sendFriendshipRequest(requestToInId) {
@@ -78,6 +81,18 @@ async function loadFriends() {
             renderPossibleMember(friendship.user1);
         }
     });
+}
+
+async function createNewGroup(name) {
+    
+    const url = '/groups/create'
+
+    const groupdto = {
+        name: name,
+        userIds: groupMemberList,
+    };
+
+    fetchData(url, 'POST', groupdto);
 }
 
 function replyToRequest(button) {
@@ -159,4 +174,43 @@ createGroupButton.addEventListener('click', loadFriends);
 
 document.addEventListener('click', button => {
     replyToRequest(button);
+});
+
+createGroupForm.addEventListener('submit', function(event) {
+    
+    event.preventDefault();
+
+    let name = createGroupForm.querySelector('.groupname-input').value.trim();
+
+    if (!name) {
+        return
+    }
+
+    groupMemberList.push(id);
+
+    createNewGroup(name);
+});
+
+possibleMemberList.addEventListener('click', (event) => {
+    const clicked = event.target.closest('.possible-member');
+
+    if(!clicked) return;
+
+    if (clicked.classList.contains('group-selected')) {
+
+        clicked.classList.remove('group-selected');
+
+        const memberId = clicked.querySelector('input[name="friendId"]').value;
+
+        const index = groupMemberList.indexOf(memberId);
+        
+        if(index !== -1) {
+            groupMemberList.splice(index, 1);
+        }
+    } else {
+
+        clicked.classList.add('group-selected');
+        groupMemberList.push(clicked.querySelector('input[name="friendId"]').value);
+    }
+
 });
