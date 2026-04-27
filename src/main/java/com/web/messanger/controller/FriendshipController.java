@@ -52,7 +52,7 @@ public class FriendshipController {
   }
 
   @GetMapping("/friends")
-  public ResponseEntity<?> getMethodName(@RequestParam Long id) {
+  public ResponseEntity<?> getFriends(@RequestParam Long id) {
 
     var user = userRepository.findById(id);
 
@@ -61,6 +61,8 @@ public class FriendshipController {
     }
 
     List<Friendship> friendships = friendshipRepository.findByUser1OrUser2(user.get(), user.get());
+
+    System.out.println(friendships);
 
     return ResponseEntity.ok(friendships);
   }
@@ -119,10 +121,8 @@ public class FriendshipController {
       friendshipRequestRepository.save(request);
 
       boolean exists =
-          friendshipRepository.existsByUser1AndUser2(
-                  partner.get().getId(), otherPartner.get().getId())
-              || friendshipRepository.existsByUser1AndUser2(
-                  otherPartner.get().getId(), partner.get().getId());
+          friendshipRepository.existsByUser1AndUser2(partner.get(), otherPartner.get())
+              || friendshipRepository.existsByUser1AndUser2(otherPartner.get(), partner.get());
 
       if (!exists) {
         var friendship =

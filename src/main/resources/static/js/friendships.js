@@ -1,8 +1,15 @@
+import { renderGroups } from './groups.js';
+
 
 const friendshipForm = document.querySelector('#friendship-form');
 const requestedId = document.querySelector('#requested-id');
 const requestList = document.querySelector('#pending-friendship-requests');
 const friendRequestButton = document.querySelector('#friendrequest-button');
+const createGroupButton = document.querySelector('#create-group-button');
+const possibleMemberList = document.querySelector('#possible-member-list');
+const createGroupForm = document.querySelector('#create-group-form');
+
+const groupMemberList = [];
 
 //polling von requests damit es aktuell bleibt
 async function sendFriendshipRequest(requestToInId) {
@@ -54,6 +61,54 @@ async function loadRequests() {
     });
 }
 
+async function loadFriends() {
+    const url = `/friendship/friends?id=${id}`;
+
+    const friendships = await fetchData(url, 'GET', null);
+
+    if (!friendships) {
+        return
+    }
+
+    console.log(friendships);
+
+    possibleMemberList.innerHTML = "";
+
+    friendships.forEach(friendship => {
+        if (friendship.user1.id == id) {
+
+            renderPossibleMember(friendship.user2);
+
+        } else {
+            renderPossibleMember(friendship.user1);
+        }
+    });
+}
+
+async function createNewGroup(name) {
+    
+    const url = '/groups/create'
+
+    const groupdto = {
+        name: name,
+        userIds: groupMemberList,
+    };
+
+    const response = await fetchData(url, 'POST', groupdto);
+
+    if (!response) {
+        return
+    }
+
+    document.querySelectorAll('.possible-member').forEach(el => {
+        el.classList.remove('group-selected');
+    });
+
+    createGroupForm.querySelector('.groupname-input').value = "";
+
+    renderGroups(response, null);
+}
+
 function replyToRequest(button) {
 
     const acceptBtn = button.target.closest(".accept-request-button");
@@ -73,6 +128,22 @@ function replyToRequest(button) {
     fetchData(url, 'POST', null);
 
     parent.remove();
+}
+
+function renderPossibleMember(possibleMember) {
+
+    const newPossibleMember = document.createElement('div');
+
+    newPossibleMember.classList.add('possible-member');
+
+    newPossibleMember.innerHTML = `
+            <input name="friendId" type="hidden" value="${possibleMember.id}">
+
+            <div class="possible-member-attributes">
+                <h3>${possibleMember.username}</h3>
+             </div>`
+
+    possibleMemberList.appendChild(newPossibleMember);
 }
 
 function renderRequests(request) {
@@ -109,10 +180,51 @@ friendshipForm.addEventListener('submit', function(event) {
         
         sendFriendshipRequest(id);
 
-        requestedId.textContent = "";
+        requestedId.value = "";
     }
 });
 
+createGroupButton.addEventListener('click', loadFriends);
+
 document.addEventListener('click', button => {
     replyToRequest(button);
+});
+
+createGroupForm.addEventListener('submit', function(event) {
+    
+    event.preventDefault();
+
+    let name = createGroupForm.querySelector('.groupname-input').value.trim();
+
+    if (!name || groupMemberList.length === 0) {
+        return
+    }
+
+    groupMemberList.push(id);
+
+    createNewGroup(name);
+});
+
+possibleMemberList.addEventListener('click', (event) => {
+    const clicked = event.target.closest('.possible-member');
+
+    if(!clicked) return;
+
+    if (clicked.classList.contains('group-selected')) {
+
+        clicked.classList.remove('group-selected');
+
+        const memberId = clicked.querySelector('input[name="friendId"]').value;
+
+        const index = groupMemberList.indexOf(memberId);
+        
+        if(index !== -1) {
+            groupMemberList.splice(index, 1);
+        }
+    } else {
+
+        clicked.classList.add('group-selected');
+        groupMemberList.push(clicked.querySelector('input[name="friendId"]').value);
+    }
+
 });

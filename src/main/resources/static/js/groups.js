@@ -123,7 +123,7 @@ async function getLastMessage(group) {
 
 
 //last message wenn es keine Messages in der Gruppe gibt
-function renderGroups(group, lastMessage) {
+export function renderGroups(group, lastMessage) {
     const lastMessageString = lastMessage
         ? `${lastMessage.sender.username}: ${lastMessage.content}`
         : "";
