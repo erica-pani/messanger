@@ -1,3 +1,5 @@
+import { renderGroups } from './groups.js';
+
 
 const friendshipForm = document.querySelector('#friendship-form');
 const requestedId = document.querySelector('#requested-id');
@@ -92,7 +94,19 @@ async function createNewGroup(name) {
         userIds: groupMemberList,
     };
 
-    fetchData(url, 'POST', groupdto);
+    const response = await fetchData(url, 'POST', groupdto);
+
+    if (!response) {
+        return
+    }
+
+    document.querySelectorAll('.possible-member').forEach(el => {
+        el.classList.remove('group-selected');
+    });
+
+    createGroupForm.querySelector('.groupname-input').value = "";
+
+    renderGroups(response, null);
 }
 
 function replyToRequest(button) {
@@ -182,7 +196,7 @@ createGroupForm.addEventListener('submit', function(event) {
 
     let name = createGroupForm.querySelector('.groupname-input').value.trim();
 
-    if (!name) {
+    if (!name || groupMemberList.length === 0) {
         return
     }
 
