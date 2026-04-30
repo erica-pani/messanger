@@ -647,3 +647,103 @@ html, body {
 .submit-button:active {
     transform: scale(0.97);
 }
+
+
+/* ============================
+   📱 MOBILE (iPhone, < 768px)
+   ============================ */
+@media (max-width: 768px) {
+
+    /* Body Layout */
+    .bodycontainer {
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Sidebar wird Top-Bar */
+    .bodycontainer > header {
+        width: 100%;
+        height: 60px;
+        display: none;
+        justify-content: center;
+        border-right: none;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    #header-wrap {
+        flex-direction: row;
+        height: 100%;
+        margin: 0;
+        gap: 10px;
+    }
+
+    /* Gruppenliste nimmt volle Breite */
+    .group-and-filter-cont {
+        width: 100% !important;
+        min-height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    /* Chatbereich nimmt volle Breite */
+    .chat-area {
+        width: 100% !important;
+        flex: 1;
+    }
+
+    /* Startscreen */
+    .start-screen {
+        width: 100% !important;
+    }
+
+    /* ============================
+       📌 Utility Windows als Overlay
+       ============================ */
+    .utility-window {
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        width: 100% !important;
+        height: 100%;
+        background-color: var(--color-bg);
+        z-index: 999;
+        overflow-y: auto;
+        border-right: none;
+        display: none; /* bleibt hidden bis geöffnet */
+        padding-bottom: 40px;
+    }
+
+    /* Wenn JS .hidden entfernt → sichtbar */
+    .utility-window:not(.hidden) {
+        display: block !important;
+    }
+
+    /* Gruppenliste Elemente */
+    .group {
+        height: 65px;
+    }
+
+    .group-attributes::before {
+        height: 40px;
+        width: 40px;
+    }
+
+    /* Chatliste */
+    .chatbox ul {
+        height: calc(100vh - 160px);
+    }
+
+    /* Message Input */
+    .message-input-field {
+        left: 5px;
+        right: 5px;
+        bottom: 5px;
+        height: 45px;
+    }
+
+    #message-input {
+        font-size: 1rem;
+    }
+}
+
