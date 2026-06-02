@@ -3,133 +3,54 @@ package com.web.messanger.controller;
 import com.web.messanger.model.ChatMessage;
 import com.web.messanger.model.Group;
 import com.web.messanger.model.GroupDTO;
-import com.web.messanger.model.User;
-import com.web.messanger.repos.GroupRepository;
-import com.web.messanger.repos.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
-import java.util.ArrayList;
+import com.web.messanger.service.GroupService;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/groups")
 public class GroupController {
 
-  private final GroupRepository groupRepository;
+  private final GroupService groupService;
 
-  private final UserRepository userRepository;
-
-  public GroupController(GroupRepository groupRepository, UserRepository userRepository) {
-    this.userRepository = userRepository;
-    this.groupRepository = groupRepository;
+  public GroupController(GroupService groupService) {
+    this.groupService = groupService;
   }
 
   @GetMapping
   public Collection<Group> getRelevantGroups(@RequestParam("username") String username) {
-    Optional<User> user = Optional.ofNullable(userRepository.findByUsername(username));
-
-    if (user.isEmpty()) {
-      throw new UsernameNotFoundException("User not found: " + username);
-    }
-
-    return user.get().getGroups();
+    return groupService.getRelevantGroups(username);
   }
 
   @GetMapping("/{groupName}")
   public List<ChatMessage> loadGroupChat(@PathVariable String groupName) {
-
-    Optional<Group> group = Optional.ofNullable(groupRepository.findByName(groupName));
-
-    if (group.isPresent()) {
-      return group.get().getMessages();
-    }
-
-    throw new EntityNotFoundException("Group not found");
+    return groupService.loadGroupChat(groupName);
   }
 
   @PostMapping("/create")
-  public ResponseEntity<?> createNewGroup(@RequestBody GroupDTO groupdto) {
-
-    Group group = new Group();
-    Set<User> memberList = new HashSet<>();
-
-    for (Long id : groupdto.getUserIds()) {
-      var user = userRepository.findById(id);
-
-      if (user.isEmpty()) {
-        return ResponseEntity.badRequest().body("User does not exist");
-      }
-
-      memberList.add(user.get());
-    }
-
-    group.setName(groupdto.getName());
-    group.setMessages(new ArrayList<>());
-    group.setUsers(memberList);
-
-    groupRepository.save(group);
-
-    return ResponseEntity.ok(group);
+  public ResponseEntity<Group> createNewGroup(@RequestBody GroupDTO groupdto) {
+    return ResponseEntity.ok(groupService.createNewGroup(groupdto));
   }
 
   @PutMapping("/{groupName}/addGroupMember")
   public Group addGroupMember(
       @RequestParam Long id, @PathVariable String groupName, @RequestParam String username) {
 
-    Optional<Group> group = groupRepository.findById(id);
-
-    Optional<User> user = Optional.ofNullable(userRepository.findByUsername(username));
-
-    if (user.isPresent() && (group.isPresent() && group.get().getName().equals(groupName))) {
-      group.get().addUser(user.get());
-      groupRepository.save(group.get());
-      return group.get();
-    }
-
-    throw new EntityNotFoundException("Group does not exist");
+    return groupService.addGroupMember(id, groupName, username);
   }
 
   @DeleteMapping("/{groupName}/removeGroupMember")
-  public Group removeGroupMembers(
+  public Group removeGroupMember(
       @RequestParam Long id, @PathVariable String groupName, @RequestParam String username) {
 
-    Optional<Group> group = groupRepository.findById(id);
-
-    Optional<User> user = Optional.ofNullable(userRepository.findByUsername(username));
-
-    if (user.isPresent() && (group.isPresent() && group.get().getName().equals(groupName))) {
-      group.get().removeUser(user.get());
-      groupRepository.save(group.get());
-      return group.get();
-    }
-
-    throw new EntityNotFoundException("Group does not exist");
+    return groupService.removeGroupMember(id, groupName, username);
   }
 
   @DeleteMapping("/{groupName}/deleteGroup")
   public ResponseEntity<Group> deleteGroup(@RequestParam Long id, @PathVariable String groupName) {
 
-    Optional<Group> group = groupRepository.findById(id);
-
-    if (group.isPresent() && group.get().getName().equals(groupName)) {
-      groupRepository.delete(group.get());
-      return ResponseEntity.ok(group.get());
-    }
-
-    throw new EntityNotFoundException();
+    return ResponseEntity.ok(groupService.deleteGroup(id, groupName));
   }
 }
