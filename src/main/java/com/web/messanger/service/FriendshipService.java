@@ -8,103 +8,104 @@ import com.web.messanger.repos.FriendshipRepository;
 import com.web.messanger.repos.FriendshipRequestRepository;
 import com.web.messanger.repos.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 @Service
 public class FriendshipService {
 
-    private final UserRepository userRepository;
-    private final FriendshipRequestRepository friendshipRequestRepository;
-    private final FriendshipRepository friendshipRepository;
+  private final UserRepository userRepository;
+  private final FriendshipRequestRepository friendshipRequestRepository;
+  private final FriendshipRepository friendshipRepository;
 
-    public FriendshipService(UserRepository userRepository,
-                             FriendshipRequestRepository friendshipRequestRepository,
-                             FriendshipRepository friendshipRepository) {
-        this.userRepository = userRepository;
-        this.friendshipRequestRepository = friendshipRequestRepository;
-        this.friendshipRepository = friendshipRepository;
+  public FriendshipService(
+      UserRepository userRepository,
+      FriendshipRequestRepository friendshipRequestRepository,
+      FriendshipRepository friendshipRepository) {
+    this.userRepository = userRepository;
+    this.friendshipRequestRepository = friendshipRequestRepository;
+    this.friendshipRepository = friendshipRepository;
+  }
+
+  public List<FriendshipRequest> getReceivedRequests(Long id) {
+    if (!userRepository.existsById(id)) {
+      throw new EntityNotFoundException("User does not exist");
     }
 
-    public List<FriendshipRequest> getReceivedRequests(Long id) {
-        if (!userRepository.existsById(id)) {
-            throw new EntityNotFoundException("User does not exist");
-        }
+    return friendshipRequestRepository.findAllByReceiverId(id).stream()
+        .filter(req -> req.getRequestStatus() == RequestStatus.PENDING)
+        .toList();
+  }
 
-        return friendshipRequestRepository.findAllByReceiverId(id).stream()
-                .filter(req -> req.getRequestStatus() == RequestStatus.PENDING)
-                .toList();
+  public List<Friendship> getFriends(Long id) {
+    User user =
+        userRepository
+            .findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+    return friendshipRepository.findByUser1OrUser2(user, user);
+  }
+
+  public FriendshipRequest sendFriendshipRequest(Long sender, Long receiver) {
+
+    if (sender.equals(receiver)) {
+      throw new IllegalArgumentException("Sender cannot be receiver");
     }
 
-    public List<Friendship> getFriends(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
-
-        return friendshipRepository.findByUser1OrUser2(user, user);
+    if (friendshipRequestRepository.existsBetweenUsers(sender, receiver)) {
+      throw new IllegalStateException("Friendship request already sent");
     }
 
-    public FriendshipRequest sendFriendshipRequest(Long sender, Long receiver) {
+    User senderUser =
+        userRepository
+            .findById(sender)
+            .orElseThrow(() -> new EntityNotFoundException("Sender not found"));
 
-        if (sender.equals(receiver)) {
-            throw new IllegalArgumentException("Sender cannot be receiver");
-        }
+    User receiverUser =
+        userRepository
+            .findById(receiver)
+            .orElseThrow(() -> new EntityNotFoundException("Receiver not found"));
 
-        if (friendshipRequestRepository.existsBetweenUsers(sender, receiver)) {
-            throw new IllegalStateException("Friendship request already sent");
-        }
+    FriendshipRequest request =
+        FriendshipRequest.builder().sender(senderUser).receiver(receiverUser).build();
 
-        User senderUser = userRepository.findById(sender)
-                .orElseThrow(() -> new EntityNotFoundException("Sender not found"));
+    return friendshipRequestRepository.save(request);
+  }
 
-        User receiverUser = userRepository.findById(receiver)
-                .orElseThrow(() -> new EntityNotFoundException("Receiver not found"));
+  public String replyToFriendshipRequest(Long id, Boolean reply) {
 
-        FriendshipRequest request = FriendshipRequest.builder()
-                .sender(senderUser)
-                .receiver(receiverUser)
-                .build();
+    FriendshipRequest request =
+        friendshipRequestRepository
+            .findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Request not found"));
 
-        return friendshipRequestRepository.save(request);
+    if (request.getRequestStatus() != RequestStatus.PENDING) {
+      throw new IllegalStateException("This request is already processed");
     }
 
-    public String replyToFriendshipRequest(Long id, Boolean reply) {
+    User sender = request.getSender();
+    User receiver = request.getReceiver();
 
-        FriendshipRequest request = friendshipRequestRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Request not found"));
+    if (reply) {
+      request.setRequestStatus(RequestStatus.ACCEPTED);
+      friendshipRequestRepository.save(request);
 
-        if (request.getRequestStatus() != RequestStatus.PENDING) {
-            throw new IllegalStateException("This request is already processed");
-        }
+      boolean exists =
+          friendshipRepository.existsByUser1AndUser2(sender, receiver)
+              || friendshipRepository.existsByUser1AndUser2(receiver, sender);
 
-        User sender = request.getSender();
-        User receiver = request.getReceiver();
+      if (!exists) {
+        Friendship friendship = Friendship.builder().user1(sender).user2(receiver).build();
 
-        if (reply) {
-            request.setRequestStatus(RequestStatus.ACCEPTED);
-            friendshipRequestRepository.save(request);
+        friendshipRepository.save(friendship);
+      }
 
-            boolean exists =
-                    friendshipRepository.existsByUser1AndUser2(sender, receiver)
-                            || friendshipRepository.existsByUser1AndUser2(receiver, sender);
-
-            if (!exists) {
-                Friendship friendship = Friendship.builder()
-                        .user1(sender)
-                        .user2(receiver)
-                        .build();
-
-                friendshipRepository.save(friendship);
-            }
-
-            return "Friendship request accepted";
-        }
-
-        request.setRequestStatus(RequestStatus.DECLINED);
-        friendshipRequestRepository.save(request);
-
-        return "Friendship request declined";
+      return "Friendship request accepted";
     }
+
+    request.setRequestStatus(RequestStatus.DECLINED);
+    friendshipRequestRepository.save(request);
+
+    return "Friendship request declined";
+  }
 }
-
