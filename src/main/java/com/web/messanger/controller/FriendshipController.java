@@ -3,6 +3,9 @@ package com.web.messanger.controller;
 import com.web.messanger.model.Friendship;
 import com.web.messanger.model.FriendshipRequest;
 import com.web.messanger.service.FriendshipService;
+
+import jakarta.persistence.EntityNotFoundException;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
