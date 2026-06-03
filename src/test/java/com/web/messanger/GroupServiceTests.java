@@ -17,6 +17,7 @@ import com.web.messanger.repos.UserRepository;
 import com.web.messanger.service.GroupService;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -27,7 +28,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
@@ -51,9 +51,12 @@ public class GroupServiceTests {
   @BeforeEach
   public void setUpTestCase() {
     groupDTO = new GroupDTO();
+    groupDTO.setName(validGroupName);
+
     group = new Group();
     group.setName(validGroupName);
     group.setId(validGroupId);
+
     user = new User();
     user.setUsername(username);
     user.setId(validUserId);
@@ -129,20 +132,18 @@ public class GroupServiceTests {
   @Test
   public void createNewGroupTest() {
 
-    String validGroupName = "neue Gruppe";
-    Set<Long> userIds = Set.of(Long.valueOf(15), Long.valueOf(17));
-    groupDTO.setName(validGroupName);
+    Set<Long> userIds = Set.of(15L, 17L);
     groupDTO.setUserIds(userIds);
 
     User user1 = new User();
     User user2 = new User();
-    user1.setId((long) 15);
-    user2.setId((long) 17);
+    user1.setId(15L);
+    user2.setId(17L);
 
     when(groupRepository.save(any(Group.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
-    when(userRepository.findById((long) 15)).thenReturn(Optional.of(user1));
-    when(userRepository.findById((long) 17)).thenReturn(Optional.of(user2));
+    when(userRepository.findById(15L)).thenReturn(Optional.of(user1));
+    when(userRepository.findById(17L)).thenReturn(Optional.of(user2));
 
     Group result = target.createNewGroup(groupDTO);
 
@@ -150,7 +151,7 @@ public class GroupServiceTests {
     assertTrue(result.getUsers().size() == 2);
 
     ArgumentCaptor<Group> captor = ArgumentCaptor.forClass(Group.class);
-    Mockito.verify(groupRepository).save(captor.capture());
+    verify(groupRepository).save(captor.capture());
 
     Group savedGroup = captor.getValue();
     assertEquals(validGroupName, savedGroup.getName());
@@ -158,10 +159,177 @@ public class GroupServiceTests {
   }
 
   @Test
-  public void addGroupMemberTest() {}
+  public void createNewGroup_whenUserNotFound() {
+
+    Set<Long> userIds = Set.of(15L, 17L);
+    groupDTO.setUserIds(userIds);
+
+    User user1 = new User();
+    User user2 = new User();
+    user1.setId(15L);
+    user2.setId(17L);
+
+    when(userRepository.findById(any())).thenReturn(Optional.empty());
+
+    assertThrows(
+        EntityNotFoundException.class,
+        () -> {
+          target.createNewGroup(groupDTO);
+        });
+
+    verify(groupRepository, never()).save(any());
+  }
 
   @Test
-  public void removeGroupMemberTest() {}
+  public void addGroupMemberTest() {
+
+    Set<User> groupMembers = new HashSet<>(Set.of(user));
+    group.setUsers(groupMembers);
+
+    String newUserUsername = "neuer User";
+    User newGroupMember = new User();
+    newGroupMember.setUsername(newUserUsername);
+    newGroupMember.setId(73829L);
+
+    when(groupRepository.save(any(Group.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+    when(groupRepository.findById(validGroupId)).thenReturn(Optional.of(group));
+    when(userRepository.findByUsername(newUserUsername)).thenReturn(newGroupMember);
+
+    Group result = target.addGroupMember(validGroupId, validGroupName, newUserUsername);
+
+    assertTrue(result.getUsers().contains(newGroupMember));
+    assertTrue(result.getUsers().size() == 2);
+
+    verify(groupRepository).save(result);
+
+    ArgumentCaptor<Group> captor = ArgumentCaptor.forClass(Group.class);
+    verify(groupRepository).save(captor.capture());
+
+    Group savedGroup = captor.getValue();
+    assertEquals(result, savedGroup);
+  }
+
+  @Test
+  public void addGroupMember_whenGroupNameDoesNotMatch() {
+    String newUserUsername = "neuer User";
+
+    when(groupRepository.findById(validGroupId)).thenReturn(Optional.of(group));
+
+    assertThrows(
+        EntityNotFoundException.class,
+        () -> {
+          target.addGroupMember(validGroupId, "dieseGruppeGibtEsNicht", newUserUsername);
+        });
+
+    verify(groupRepository, never()).save(any(Group.class));
+  }
+
+  @Test
+  public void addGroupMember_whenUserNotFound() {
+    String newUserUsername = "neuer User";
+
+    when(groupRepository.findById(validGroupId)).thenReturn(Optional.of(group));
+    when(userRepository.findByUsername(newUserUsername)).thenReturn(null);
+
+    assertThrows(
+        EntityNotFoundException.class,
+        () -> {
+          target.addGroupMember(validGroupId, validGroupName, newUserUsername);
+        });
+
+    verify(groupRepository, never()).save(any(Group.class));
+  }
+
+  @Test
+  public void addGroupMember_whenGroupNotFound() {
+    String newUserUsername = "neuer User";
+
+    when(groupRepository.findById(validGroupId)).thenReturn(Optional.empty());
+
+    assertThrows(
+        EntityNotFoundException.class,
+        () -> {
+          target.addGroupMember(validGroupId, validGroupName, newUserUsername);
+        });
+
+    verify(groupRepository, never()).save(any(Group.class));
+  }
+
+  @Test
+  public void removeGroupMemberTest() {
+    String newUserUsername = "neuer User";
+    User newGroupMember = new User();
+    newGroupMember.setUsername(newUserUsername);
+    newGroupMember.setId(73829L);
+
+    Set<User> groupMembers = new HashSet<>(Set.of(user, newGroupMember));
+    group.setUsers(groupMembers);
+
+    when(groupRepository.save(any(Group.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+    when(groupRepository.findById(validGroupId)).thenReturn(Optional.of(group));
+    when(userRepository.findByUsername(newUserUsername)).thenReturn(newGroupMember);
+
+    Group result = target.removeGroupMember(validGroupId, validGroupName, newUserUsername);
+
+    assertTrue(!result.getUsers().contains(newGroupMember));
+    assertTrue(result.getUsers().size() == 1);
+
+    verify(groupRepository).save(result);
+
+    ArgumentCaptor<Group> captor = ArgumentCaptor.forClass(Group.class);
+    verify(groupRepository).save(captor.capture());
+
+    Group savedGroup = captor.getValue();
+    assertEquals(result, savedGroup);
+  }
+
+  @Test
+  public void removeGroupMember_whenGroupNameDoesNotMatch() {
+    String newUserUsername = "neuer User";
+
+    when(groupRepository.findById(validGroupId)).thenReturn(Optional.of(group));
+
+    assertThrows(
+        EntityNotFoundException.class,
+        () -> {
+          target.removeGroupMember(validGroupId, "dieseGruppeGibtEsNicht", newUserUsername);
+        });
+
+    verify(groupRepository, never()).save(any(Group.class));
+  }
+
+  @Test
+  public void removeGroupMemberTest_whenGroupNotFound() {
+    String newUserUsername = "neuer User";
+
+    when(groupRepository.findById(validGroupId)).thenReturn(Optional.empty());
+
+    assertThrows(
+        EntityNotFoundException.class,
+        () -> {
+          target.removeGroupMember(validGroupId, validGroupName, newUserUsername);
+        });
+
+    verify(groupRepository, never()).save(any(Group.class));
+  }
+
+  @Test
+  public void removeGroupMember_whenUserNotFound() {
+    String newUserUsername = "neuer User";
+
+    when(groupRepository.findById(validGroupId)).thenReturn(Optional.of(group));
+    when(userRepository.findByUsername(newUserUsername)).thenReturn(null);
+
+    assertThrows(
+        EntityNotFoundException.class,
+        () -> {
+          target.removeGroupMember(validGroupId, validGroupName, newUserUsername);
+        });
+
+    verify(groupRepository, never()).save(any(Group.class));
+  }
 
   @Test
   public void deleteGroupTest() {
