@@ -1,8 +1,11 @@
 package com.web.messanger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.web.messanger.model.Group;
@@ -11,8 +14,10 @@ import com.web.messanger.model.User;
 import com.web.messanger.repos.GroupRepository;
 import com.web.messanger.repos.UserRepository;
 import com.web.messanger.service.GroupService;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.Optional;
 import java.util.Set;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,11 +36,23 @@ public class GroupServiceTests {
 
   @InjectMocks private GroupService target;
 
-  GroupDTO groupDTO = null;
+  GroupDTO groupDTO;
+  Group group;
+  String validName = "gruppe";
+  Long validId = 17L;
 
   @BeforeEach
   public void setUpTestCase() {
     groupDTO = new GroupDTO();
+    group = new Group();
+    group.setName(validName);
+    group.setId(validId);
+  }
+
+  @AfterEach
+  public void tearDowntestCase() {
+    groupDTO = null;
+    group = null;
   }
 
   @Test
@@ -82,5 +99,41 @@ public class GroupServiceTests {
   public void removeGroupMemberTest() {}
 
   @Test
-  public void deleteGroup() {}
+  public void deleteGroupTest() {
+
+    when(groupRepository.findById(validId)).thenReturn(Optional.of(group));
+
+    Group result = target.deleteGroup(validId, validName);
+
+    assertEquals(group, result);
+    verify(groupRepository).delete(result);
+  }
+
+  @Test
+  public void deleteGroup_whenNameDoesNotMatch() {
+
+    when(groupRepository.findById(validId)).thenReturn(Optional.of(group));
+
+    assertThrows(
+        EntityNotFoundException.class,
+        () -> {
+          target.deleteGroup(validId, "GruppeDieEsNichtGibt");
+        });
+
+    verify(groupRepository, never()).delete(any());
+  }
+
+  @Test
+  public void deleteGroup_whenNotFound() {
+
+    when(groupRepository.findById(validId)).thenReturn(Optional.empty());
+
+    assertThrows(
+        EntityNotFoundException.class,
+        () -> {
+          target.deleteGroup(validId, validName);
+        });
+
+    verify(groupRepository, never()).delete(any());
+  }
 }
