@@ -1,4 +1,4 @@
-package com.web.messanger;
+package com.web.messanger.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -14,7 +14,6 @@ import com.web.messanger.model.GroupDTO;
 import com.web.messanger.model.User;
 import com.web.messanger.repos.GroupRepository;
 import com.web.messanger.repos.UserRepository;
-import com.web.messanger.service.GroupService;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.Collection;
 import java.util.HashSet;

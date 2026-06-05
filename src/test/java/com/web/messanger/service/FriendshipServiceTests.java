@@ -1,16 +1,20 @@
-package com.web.messanger;
+package com.web.messanger.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.web.messanger.model.Friendship;
 import com.web.messanger.model.FriendshipRequest;
+import com.web.messanger.model.RequestStatus;
 import com.web.messanger.model.User;
 import com.web.messanger.repos.FriendshipRepository;
 import com.web.messanger.repos.FriendshipRequestRepository;
 import com.web.messanger.repos.UserRepository;
-import com.web.messanger.service.FriendshipService;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +22,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -106,8 +111,92 @@ public class FriendshipServiceTests {
 
     when(userRepository.findById(validUserIdS)).thenReturn(Optional.empty());
 
-    assertThrows(EntityNotFoundException.class, () -> {
-        target.getFriends(validUserIdS);
-    });
+    assertThrows(
+        EntityNotFoundException.class,
+        () -> {
+          target.getFriends(validUserIdS);
+        });
+  }
+
+  @Test
+  public void sendFriendshipRequestTest() {
+    when(userRepository.findById(validUserIdS)).thenReturn(Optional.of(sender));
+    when(userRepository.findById(validUserIdR)).thenReturn(Optional.of(receiver));
+    when(friendshipRequestRepository.save(any(FriendshipRequest.class)))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+
+    target.sendFriendshipRequest(validUserIdS, validUserIdR);
+
+    ArgumentCaptor<FriendshipRequest> captor = ArgumentCaptor.forClass(FriendshipRequest.class);
+    verify(friendshipRequestRepository).save(captor.capture());
+    FriendshipRequest friendshipRequest = captor.getValue();
+
+    assertEquals(sender, friendshipRequest.getSender());
+    assertEquals(receiver, friendshipRequest.getReceiver());
+    assertEquals(RequestStatus.PENDING, friendshipRequest.getRequestStatus());
+  }
+
+  @Test
+  public void sendFriendshipRequest_whenSenderEqualsReceiver() {
+
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> {
+          target.sendFriendshipRequest(validUserIdS, validUserIdS);
+        });
+
+    verify(friendshipRequestRepository, never()).save(any());
+  }
+
+  @Test
+  public void sendFriendshipRequest_whenRequestAlreadyExists() {
+
+    when(friendshipRequestRepository.existsBetweenUsers(validUserIdS, validUserIdR))
+        .thenReturn(true);
+
+    assertThrows(
+        IllegalStateException.class,
+        () -> {
+          target.sendFriendshipRequest(validUserIdS, validUserIdR);
+        });
+
+    verify(friendshipRequestRepository, never()).save(any());
+  }
+
+  @Test
+  public void sendFriendshipRequest_whenSenderNotFound() {
+
+    when(friendshipRequestRepository.existsBetweenUsers(validUserIdS, validUserIdR))
+        .thenReturn(false);
+    when(userRepository.findById(validUserIdS)).thenReturn(Optional.empty());
+
+    assertThrows(
+        EntityNotFoundException.class,
+        () -> {
+          target.sendFriendshipRequest(validUserIdS, validUserIdR);
+        });
+
+    verify(friendshipRequestRepository, never()).save(any());
+  }
+
+  @Test
+  public void sendFriendshipRequest_whenReceiverNotFound() {
+    when(friendshipRequestRepository.existsBetweenUsers(validUserIdS, validUserIdR))
+        .thenReturn(false);
+    when(userRepository.findById(validUserIdS)).thenReturn(Optional.of(sender));
+    when(userRepository.findById(validUserIdR)).thenReturn(Optional.empty());
+
+    assertThrows(
+        EntityNotFoundException.class,
+        () -> {
+          target.sendFriendshipRequest(validUserIdS, validUserIdR);
+        });
+
+    verify(friendshipRequestRepository, never()).save(any());
+  }
+
+  @Test
+  public void replyToFriendshipRequestTest() {
+
   }
 }
