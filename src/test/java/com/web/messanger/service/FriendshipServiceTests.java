@@ -196,7 +196,5 @@ public class FriendshipServiceTests {
   }
 
   @Test
-  public void replyToFriendshipRequestTest() {
-
-  }
+  public void replyToFriendshipRequestTest() {}
 }

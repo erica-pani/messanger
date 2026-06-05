@@ -4,16 +4,19 @@ import com.web.messanger.model.User;
 import com.web.messanger.repos.UserRepository;
 import java.util.ArrayList;
 import java.util.HashSet;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
 
-  @Autowired private UserRepository userRepository;
+  private final UserRepository userRepository;
+  private final BCryptPasswordEncoder encoder;
 
-  @Autowired private BCryptPasswordEncoder encoder;
+  public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    this.userRepository = userRepository;
+    this.encoder = bCryptPasswordEncoder;
+  }
 
   public void saveUser(User user) {
     user.setHashed_password(encoder.encode(user.getHashed_password()));
