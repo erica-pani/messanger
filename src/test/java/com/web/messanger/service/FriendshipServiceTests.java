@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -211,10 +212,7 @@ public class FriendshipServiceTests {
 
     target.replyToFriendshipRequest(validRequestId, true);
 
-    ArgumentCaptor<FriendshipRequest> savedFriendshipRequest =
-        ArgumentCaptor.forClass(FriendshipRequest.class);
-    verify(friendshipRequestRepository).save(savedFriendshipRequest.capture());
-    assertEquals(RequestStatus.ACCEPTED, savedFriendshipRequest.getValue().getRequestStatus());
+    assertEquals(RequestStatus.ACCEPTED, friendshipRequest.getRequestStatus());
 
     ArgumentCaptor<Friendship> savedFriendship = ArgumentCaptor.forClass(Friendship.class);
     verify(friendshipRepository).save(savedFriendship.capture());
@@ -227,10 +225,19 @@ public class FriendshipServiceTests {
   }
 
   @Test
-  public void replyToFriendshipRequest_whenRequestDoesNotExist() {}
+  public void replyToFriendshipRequest_whenRequestDoesNotExist() {
 
-  @Test
-  public void replyToFriendshipRequest_whenAccepted() {}
+    when(friendshipRequestRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+    assertThrows(
+        EntityNotFoundException.class,
+        () -> {
+          target.replyToFriendshipRequest(83289L, true);
+        });
+
+    verify(friendshipRepository, never()).save(any());
+    verify(friendshipRequestRepository, never()).save(any());
+  }
 
   @Test
   public void replyToFriendshipRequestTest_whenDeclined() {
@@ -248,5 +255,29 @@ public class FriendshipServiceTests {
     assertEquals(RequestStatus.DECLINED, friendshipRequest.getRequestStatus());
 
     verify(friendshipRepository, never()).save(any());
+  }
+
+  @Test
+  public void replyToFriendshipRequest_whenRequestAlreadyProcessed() {
+    Long validRequestId = 42092L;
+    FriendshipRequest friendshipRequest = new FriendshipRequest();
+    friendshipRequest.setRequestStatus(RequestStatus.ACCEPTED);
+
+    when(friendshipRequestRepository.findById(validRequestId))
+        .thenReturn(Optional.of(friendshipRequest));
+
+    assertThrows(
+        IllegalStateException.class,
+        () -> {
+          target.replyToFriendshipRequest(validRequestId, true);
+        });
+    assertThrows(
+        IllegalStateException.class,
+        () -> {
+          target.replyToFriendshipRequest(validRequestId, false);
+        });
+
+    verify(friendshipRepository, never()).save(any());
+    verify(friendshipRequestRepository, never()).save(any());
   }
 }
