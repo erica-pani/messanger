@@ -196,5 +196,57 @@ public class FriendshipServiceTests {
   }
 
   @Test
-  public void replyToFriendshipRequestTest() {}
+  public void replyToFriendshipRequestTest_whenAccepted() {
+    Long validRequestId = 42092L;
+    FriendshipRequest friendshipRequest = new FriendshipRequest();
+    friendshipRequest.setId(validRequestId);
+    friendshipRequest.setSender(sender);
+    friendshipRequest.setReceiver(receiver);
+
+    when(friendshipRequestRepository.findById(validRequestId))
+        .thenReturn(Optional.of(friendshipRequest));
+    when(friendshipRequestRepository.save(friendshipRequest))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+    when(friendshipRepository.existsByUser1AndUser2(any(), any())).thenReturn(false);
+
+    target.replyToFriendshipRequest(validRequestId, true);
+
+    ArgumentCaptor<FriendshipRequest> savedFriendshipRequest =
+        ArgumentCaptor.forClass(FriendshipRequest.class);
+    verify(friendshipRequestRepository).save(savedFriendshipRequest.capture());
+    assertEquals(RequestStatus.ACCEPTED, savedFriendshipRequest.getValue().getRequestStatus());
+
+    ArgumentCaptor<Friendship> savedFriendship = ArgumentCaptor.forClass(Friendship.class);
+    verify(friendshipRepository).save(savedFriendship.capture());
+    assertTrue(
+        sender.equals(savedFriendship.getValue().getUser1())
+            || sender.equals(savedFriendship.getValue().getUser2()));
+    assertTrue(
+        receiver.equals(savedFriendship.getValue().getUser1())
+            || receiver.equals(savedFriendship.getValue().getUser2()));
+  }
+
+  @Test
+  public void replyToFriendshipRequest_whenRequestDoesNotExist() {}
+
+  @Test
+  public void replyToFriendshipRequest_whenAccepted() {}
+
+  @Test
+  public void replyToFriendshipRequestTest_whenDeclined() {
+    Long validRequestId = 42092L;
+    FriendshipRequest friendshipRequest = new FriendshipRequest();
+    friendshipRequest.setId(validRequestId);
+    friendshipRequest.setSender(sender);
+    friendshipRequest.setReceiver(receiver);
+
+    when(friendshipRequestRepository.findById(validRequestId))
+        .thenReturn(Optional.of(friendshipRequest));
+
+    target.replyToFriendshipRequest(validRequestId, false);
+
+    assertEquals(RequestStatus.DECLINED, friendshipRequest.getRequestStatus());
+
+    verify(friendshipRepository, never()).save(any());
+  }
 }
