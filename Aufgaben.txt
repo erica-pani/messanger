@@ -1,0 +1,8 @@
+DTOs und Mapper
+Exception Handler
+Websocket Endpoint security
+subscription list for user
+JWT for athentication
+private Chats
+
+wenn alles installiert arbeit an react frontend
