@@ -1,6 +1,7 @@
 package com.web.messanger.service;
 
 import com.web.messanger.model.User;
+import com.web.messanger.model.dtos.UserDTO;
 import com.web.messanger.repos.UserRepository;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -18,8 +19,14 @@ public class UserService {
     this.encoder = bCryptPasswordEncoder;
   }
 
-  public void saveUser(User user) {
-    user.setHashed_password(encoder.encode(user.getHashed_password()));
+  public void saveUser(UserDTO userdto) {
+    User user = new User();
+
+    user.setFirstname(userdto.firstname());
+    user.setLastname(userdto.lastname());
+    user.setUsername(userdto.username());
+    user.setHashed_password(encoder.encode(userdto.password()));
+    user.setBirthDate(userdto.birthDate());
     user.setMessages(new ArrayList<>());
     user.setGroups(new HashSet<>());
     userRepository.save(user);

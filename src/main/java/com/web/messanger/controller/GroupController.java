@@ -2,7 +2,7 @@ package com.web.messanger.controller;
 
 import com.web.messanger.model.ChatMessage;
 import com.web.messanger.model.Group;
-import com.web.messanger.model.GroupDTO;
+import com.web.messanger.model.dtos.GroupDTO;
 import com.web.messanger.service.GroupService;
 import java.util.Collection;
 import java.util.List;
@@ -20,7 +20,7 @@ public class GroupController {
   }
 
   @GetMapping
-  public Collection<Group> getRelevantGroups(@RequestParam("username") String username) {
+  public Collection<Group> getRelevantGroups(@RequestParam String username) {
     return groupService.getRelevantGroups(username);
   }
 

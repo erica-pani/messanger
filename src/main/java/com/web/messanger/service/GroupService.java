@@ -2,8 +2,8 @@ package com.web.messanger.service;
 
 import com.web.messanger.model.ChatMessage;
 import com.web.messanger.model.Group;
-import com.web.messanger.model.GroupDTO;
 import com.web.messanger.model.User;
+import com.web.messanger.model.dtos.GroupDTO;
 import com.web.messanger.repos.GroupRepository;
 import com.web.messanger.repos.UserRepository;
 import jakarta.persistence.EntityNotFoundException;

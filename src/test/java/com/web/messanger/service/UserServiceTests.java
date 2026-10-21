@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.web.messanger.model.User;
+import com.web.messanger.model.dtos.UserDTO;
 import com.web.messanger.repos.UserRepository;
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +29,7 @@ public class UserServiceTests {
 
   @InjectMocks private UserService target;
 
-  User user;
+  UserDTO user;
   Long validId = 15L;
   String validFirstname = "Max";
   String validLastname = "Mustermann";
@@ -37,13 +38,8 @@ public class UserServiceTests {
 
   @BeforeEach
   public void setUpTestCase() {
-    user = new User();
-    user.setId(validId);
-    user.setFirstname(validFirstname);
-    user.setLastname(validLastname);
-    user.setUsername(validUsername);
-    user.setHashed_password(validPassword);
-    user.setBirthDate(LocalDate.now());
+    user =
+        new UserDTO(validFirstname, validLastname, validUsername, validPassword, LocalDate.now());
   }
 
   @Test
@@ -62,7 +58,6 @@ public class UserServiceTests {
     verify(userRepository).save(savedUser.capture());
     User result = savedUser.getValue();
 
-    assertEquals(validId, result.getId());
     assertEquals(validFirstname, result.getFirstname());
     assertEquals(validLastname, result.getLastname());
     assertEquals(validUsername, result.getUsername());

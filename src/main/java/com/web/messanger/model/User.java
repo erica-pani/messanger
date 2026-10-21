@@ -2,6 +2,7 @@ package com.web.messanger.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,6 +26,8 @@ public class User {
   private String lastname;
   private String username;
   private String hashed_password;
+
+  @Column(name = "geburtsdatum", columnDefinition = "DATE")
   private LocalDate birthDate;
 
   @JsonIgnore

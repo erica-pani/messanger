@@ -1,4 +1,4 @@
-package com.web.messanger.model;
+package com.web.messanger.model.dtos;
 
 import java.util.Set;
 
