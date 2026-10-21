@@ -1,7 +1,6 @@
 package com.web.messanger.config;
 
-import com.web.messanger.service.MyUserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.web.messanger.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -21,7 +20,11 @@ public class SecurityConfig {
 
   private final int STRENGTH = 10;
 
-  @Autowired private MyUserDetailsService userDetailsService;
+  private final CustomUserDetailsService userDetailsService;
+
+  SecurityConfig(CustomUserDetailsService userDetailsService) {
+    this.userDetailsService = userDetailsService;
+  }
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
