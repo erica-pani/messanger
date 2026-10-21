@@ -49,8 +49,8 @@ public class GroupServiceTests {
 
   @BeforeEach
   public void setUpTestCase() {
-    groupDTO = new GroupDTO();
-    groupDTO.setName(validGroupName);
+    Set<Long> userIds = Set.of(15L, 17L);
+    groupDTO = new GroupDTO(validGroupName, userIds);
 
     group = new Group();
     group.setName(validGroupName);
@@ -131,9 +131,6 @@ public class GroupServiceTests {
   @Test
   public void createNewGroupTest() {
 
-    Set<Long> userIds = Set.of(15L, 17L);
-    groupDTO.setUserIds(userIds);
-
     User user1 = new User();
     User user2 = new User();
     user1.setId(15L);
@@ -159,9 +156,6 @@ public class GroupServiceTests {
 
   @Test
   public void createNewGroup_whenUserNotFound() {
-
-    Set<Long> userIds = Set.of(15L, 17L);
-    groupDTO.setUserIds(userIds);
 
     User user1 = new User();
     User user2 = new User();

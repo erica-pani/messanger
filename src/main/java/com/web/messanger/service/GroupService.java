@@ -41,7 +41,7 @@ public class GroupService {
   public Group createNewGroup(GroupDTO groupdto) {
     Set<User> members = new HashSet<>();
 
-    for (Long id : groupdto.getUserIds()) {
+    for (Long id : groupdto.userIds()) {
       User user =
           userRepository
               .findById(id)
@@ -50,7 +50,7 @@ public class GroupService {
     }
 
     Group group = new Group();
-    group.setName(groupdto.getName());
+    group.setName(groupdto.name());
     group.setMessages(new ArrayList<>());
     group.setUsers(members);
 

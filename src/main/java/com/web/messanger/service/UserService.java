@@ -19,9 +19,8 @@ public class UserService {
     this.encoder = bCryptPasswordEncoder;
   }
 
-  public void saveUser(UserDTO userdto) {
+  public User saveUser(UserDTO userdto) {
     User user = new User();
-
     user.setFirstname(userdto.firstname());
     user.setLastname(userdto.lastname());
     user.setUsername(userdto.username());
@@ -29,6 +28,6 @@ public class UserService {
     user.setBirthDate(userdto.birthDate());
     user.setMessages(new ArrayList<>());
     user.setGroups(new HashSet<>());
-    userRepository.save(user);
+    return userRepository.save(user);
   }
 }
