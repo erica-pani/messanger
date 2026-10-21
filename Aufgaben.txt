@@ -1,4 +1,5 @@
 DTOs und Mapper
+schnittstellen über ids und nicht über names und User id zu String
 Exception Handler
 Websocket Endpoint security
 subscription list for user
