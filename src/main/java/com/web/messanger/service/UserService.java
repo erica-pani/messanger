@@ -20,6 +20,10 @@ public class UserService {
   }
 
   public User saveUser(UserDTO userdto) {
+
+    if (userRepository.existsByUsername(userdto.username())) {
+      throw new IllegalArgumentException();
+    }
     User user = new User();
     user.setFirstname(userdto.firstname());
     user.setLastname(userdto.lastname());

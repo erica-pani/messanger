@@ -3,8 +3,8 @@ package com.web.messanger.controller;
 import com.web.messanger.model.Friendship;
 import com.web.messanger.model.FriendshipRequest;
 import com.web.messanger.service.FriendshipService;
-import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,25 +31,13 @@ public class FriendshipController {
   @PostMapping("/request/to")
   public ResponseEntity<?> sendFriendshipRequest(
       @RequestParam Long sender, @RequestParam Long receiver) {
-
-    try {
-      return ResponseEntity.status(201)
-          .body(friendshipService.sendFriendshipRequest(sender, receiver));
-    } catch (IllegalArgumentException e) {
-      return ResponseEntity.badRequest().body(e.getMessage());
-    } catch (IllegalStateException e) {
-      return ResponseEntity.status(409).body(e.getMessage());
-    }
+    return new ResponseEntity<>(
+        friendshipService.sendFriendshipRequest(sender, receiver), HttpStatus.CREATED);
   }
 
   @PostMapping("/request/reply")
   public ResponseEntity<?> replyToFriendshipRequest(
       @RequestParam Long id, @RequestParam Boolean reply) {
-
-    try {
-      return ResponseEntity.ok(friendshipService.replyToFriendshipRequest(id, reply));
-    } catch (IllegalStateException | EntityNotFoundException e) {
-      return ResponseEntity.badRequest().body(e.getMessage());
-    }
+    return ResponseEntity.ok(friendshipService.replyToFriendshipRequest(id, reply));
   }
 }

@@ -1,13 +1,8 @@
 package com.web.messanger.config;
 
-import org.postgresql.translation.messages_sr;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
-
 import com.web.messanger.service.GroupService;
-
 import lombok.AllArgsConstructor;
-
+import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.SimpMessageType;
@@ -15,38 +10,40 @@ import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 @Configuration
 @AllArgsConstructor
-public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer{
-    
-    private final GroupService groupService;
+public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer {
 
-    @Override
-    public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(new ChannelInterceptor() {
+  private final GroupService groupService;
 
-            @Override
-            public Message<?> preSend(Message<?> message, MessageChannel channel) {
-                StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
+  @Override
+  public void configureClientInboundChannel(ChannelRegistration registration) {
+    registration.interceptors(
+        new ChannelInterceptor() {
 
-                if (SimpMessageType.SUBSCRIBE.equals(accessor.getMessageType())) {
-                    String destination = accessor.getDestination();
-                    String username = accessor.getUser() != null ? accessor.getUser().getName() : null;
+          @Override
+          public Message<?> preSend(Message<?> message, MessageChannel channel) {
+            StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
-                    if (username == null) {
-                        throw new IllegalArgumentException("Nicht autorisiert: Kein Benutzer gefunden.");
-                    }
+            if (SimpMessageType.SUBSCRIBE.equals(accessor.getMessageType())) {
+              String destination = accessor.getDestination();
+              String username = accessor.getUser() != null ? accessor.getUser().getName() : null;
 
-                    String groupId = destination.split("/")[3];
+              if (username == null) {
+                throw new IllegalArgumentException("Nicht autorisiert: Kein Benutzer gefunden.");
+              }
 
-                    if (!groupService.isUserinGroup(username, groupId)) {
-                        throw new AccessDeniedException("Nicht autorisiert: ");
-                    }
-                }
+              String groupId = destination.split("/")[3];
 
-                return message;
+              if (!groupService.isUserinGroup(username, groupId)) {
+                throw new AccessDeniedException("Nicht autorisiert: ");
+              }
             }
+
+            return message;
+          }
         });
-    }
+  }
 }
