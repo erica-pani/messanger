@@ -31,7 +31,7 @@ public class User {
   private LocalDate birthDate;
 
   @JsonIgnore
-  @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "sender")
   private List<ChatMessage> messages;
 
   @JsonIgnore
