@@ -97,4 +97,9 @@ public class GroupService {
     groupRepository.delete(group);
     return group;
   }
+
+  public boolean isUserinGroup(String username, String groupId) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'isUserinGroup'");
+  }
 }
