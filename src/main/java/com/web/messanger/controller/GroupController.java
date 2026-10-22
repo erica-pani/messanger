@@ -4,6 +4,7 @@ import com.web.messanger.model.ChatMessage;
 import com.web.messanger.model.Group;
 import com.web.messanger.model.dtos.GroupDTO;
 import com.web.messanger.service.GroupService;
+import jakarta.validation.Valid;
 import java.util.Collection;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class GroupController {
   }
 
   @PostMapping("/create")
-  public ResponseEntity<Group> createNewGroup(@RequestBody GroupDTO groupdto) {
+  public ResponseEntity<Group> createNewGroup(@Valid @RequestBody GroupDTO groupdto) {
     return ResponseEntity.ok(groupService.createNewGroup(groupdto));
   }
 

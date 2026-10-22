@@ -4,6 +4,7 @@ import com.web.messanger.controller.mapper.UserMapper;
 import com.web.messanger.model.User;
 import com.web.messanger.model.dtos.UserDTO;
 import com.web.messanger.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +25,7 @@ public class UserController {
   }
 
   @PostMapping("/register")
-  public ResponseEntity<UserDTO> register(@RequestBody UserDTO userdto) {
+  public ResponseEntity<UserDTO> register(@Valid @RequestBody UserDTO userdto) {
     User user = service.saveUser(userdto);
     return new ResponseEntity<>(userMapper.toUserDTO(user), HttpStatus.CREATED);
   }
