@@ -72,9 +72,9 @@ public class GroupServiceTests {
   public void getRelevantGroupsTest() {
     user.setGroups(Set.of(group));
 
-    when(userRepository.findByUsername(username)).thenReturn(user);
+    when(userRepository.findById(validUserId)).thenReturn(Optional.of(user));
 
-    Collection<Group> userGroups = target.getRelevantGroups(username);
+    Collection<Group> userGroups = target.getRelevantGroups(validUserId);
 
     assertEquals(1, userGroups.size());
     assertTrue(userGroups.contains(group));
@@ -84,12 +84,12 @@ public class GroupServiceTests {
   public void getRelevantGroups_whenUserNotFound() {
     user.setGroups(Set.of(group));
 
-    when(userRepository.findByUsername(username)).thenReturn(null);
+    when(userRepository.findById(validUserId)).thenReturn(Optional.empty());
 
     assertThrows(
         UsernameNotFoundException.class,
         () -> {
-          target.getRelevantGroups(username);
+          target.getRelevantGroups(validUserId);
         });
   }
 
@@ -102,9 +102,9 @@ public class GroupServiceTests {
     List<ChatMessage> messages = List.of(message1, message2);
     group.setMessages(messages);
 
-    when(groupRepository.findByName(validGroupName)).thenReturn(group);
+    when(groupRepository.findById(validGroupId)).thenReturn(Optional.of(group));
 
-    List<ChatMessage> result = target.loadGroupChat(validGroupName);
+    List<ChatMessage> result = target.loadGroupChat(validGroupId);
 
     assertEquals(2, result.size());
     assertTrue(result.contains(message1));
@@ -119,12 +119,12 @@ public class GroupServiceTests {
     List<ChatMessage> messages = List.of(message1, message2);
     group.setMessages(messages);
 
-    when(groupRepository.findByName(validGroupName)).thenReturn(null);
+    when(groupRepository.findById(validGroupId)).thenReturn(Optional.empty());
 
     assertThrows(
         EntityNotFoundException.class,
         () -> {
-          target.loadGroupChat(validGroupName);
+          target.loadGroupChat(validGroupId);
         });
   }
 

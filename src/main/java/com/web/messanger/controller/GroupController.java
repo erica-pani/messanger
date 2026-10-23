@@ -2,12 +2,16 @@ package com.web.messanger.controller;
 
 import com.web.messanger.model.ChatMessage;
 import com.web.messanger.model.Group;
+import com.web.messanger.model.UserPrincipal;
 import com.web.messanger.model.dtos.GroupDTO;
 import com.web.messanger.service.GroupService;
 import jakarta.validation.Valid;
 import java.util.Collection;
 import java.util.List;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,14 +24,14 @@ public class GroupController {
     this.groupService = groupService;
   }
 
-  @GetMapping
-  public Collection<Group> getRelevantGroups(@RequestParam String username) {
-    return groupService.getRelevantGroups(username);
+  @GetMapping("/")
+  public Collection<Group> getRelevantGroups(@AuthenticationPrincipal UserDetails userDetails) {
+    return groupService.getRelevantGroups(((UserPrincipal) userDetails).getId());
   }
 
-  @GetMapping("/{groupName}")
-  public List<ChatMessage> loadGroupChat(@PathVariable String groupName) {
-    return groupService.loadGroupChat(groupName);
+  @GetMapping("/{groupId}")
+  public ResponseEntity<List<ChatMessage>> loadGroupChat(@PathVariable Long groupId) {
+    return new ResponseEntity<>(groupService.loadGroupChat(groupId), HttpStatus.OK);
   }
 
   @PostMapping("/create")

@@ -56,11 +56,12 @@ public class ChatController {
 
     message.setTime(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
 
-    messageTemplate.convertAndSend("/topic/public/" + message.getGroup().getName(), message);
+    ChatMessage savedMessage = messageRepository.save(message);
 
-    messageRepository.save(message);
+    messageTemplate.convertAndSend(
+        "/topic/public/" + savedMessage.getGroup().getName(), savedMessage);
 
-    return message;
+    return savedMessage;
   }
 
   @MessageMapping("/chat.addUser")

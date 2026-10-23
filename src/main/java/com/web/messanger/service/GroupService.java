@@ -22,20 +22,32 @@ public class GroupService {
     this.userRepository = userRepository;
   }
 
-  public Collection<Group> getRelevantGroups(String username) {
+  public Collection<Group> getRelevantGroups(Long userId) {
     User user =
-        Optional.ofNullable(userRepository.findByUsername(username))
-            .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+        userRepository
+            .findById(userId)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found: " + userId));
 
     return user.getGroups();
   }
 
-  public List<ChatMessage> loadGroupChat(String groupName) {
+  public List<ChatMessage> loadGroupChat(Long groupId) {
     Group group =
-        Optional.ofNullable(groupRepository.findByName(groupName))
+        groupRepository
+            .findById(groupId)
             .orElseThrow(() -> new EntityNotFoundException("Group not found"));
 
-    return group.getMessages();
+    List<ChatMessage> messages = group.getMessages();
+
+    for (ChatMessage message : messages) {
+      if (message.getSender() == null) {
+        message.setSenderName("Unbekannt");
+      } else {
+        message.setSenderName(message.getSender().getUsername());
+      }
+    }
+
+    return messages;
   }
 
   public Group createNewGroup(GroupDTO groupdto) {

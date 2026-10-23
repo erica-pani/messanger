@@ -12,6 +12,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
 @Setter
@@ -36,6 +38,7 @@ public class ChatMessage {
 
   @ManyToOne()
   @JoinColumn(name = "sender_id")
+  @OnDelete(action = OnDeleteAction.SET_NULL)
   private User sender;
 
   @ManyToOne

@@ -28,15 +28,15 @@ const availableColors = [
 ];
 
 
-function loadChatInfo(groupName) {
+function loadChatInfo(groupId) {
 
     chatMessageList.innerHTML = "";
 
-    if(chatCache[groupName]) {
-        chatCache[groupName].forEach(msg => renderChatMessage(msg));
+    if(chatCache[groupId]) {
+        chatCache[groupId].forEach(msg => renderChatMessage(msg));
     }
 
-    fetch('/groups/' + encodeURIComponent(groupName))
+    fetch('/groups/' + encodeURIComponent(groupId))
         .then(res => {
             if(!res.ok) {
                 console.log("Problem");
@@ -46,7 +46,7 @@ function loadChatInfo(groupName) {
             return res.json()
         })
         .then(data => {
-            const cached = chatCache[groupName] || [];
+            const cached = chatCache[groupId] || [];
 
             const merged = [...data, ...cached]
                 .reduce((acc, msg) => {
@@ -57,7 +57,7 @@ function loadChatInfo(groupName) {
             const finalMessages = Object.values(merged)
                 .sort((a, b) => a.id - b.id);
 
-            chatCache[groupName] = finalMessages;
+            chatCache[groupId] = finalMessages;
             chatMessageList.innerHTML = "";
 
             finalMessages.forEach(msg => renderChatMessage(msg));
@@ -86,7 +86,7 @@ function renderChatMessage(message) {
 
 async function loadGroups() {
     try {
-        const res = await fetch('/groups?username=' + username);
+        const res = await fetch('/groups/');
 
         if (!res.ok) {
             console.log("Problem");
@@ -109,7 +109,7 @@ async function loadGroups() {
 
 async function getLastMessage(group) {
     
-    const res = await fetch('/groups/' + encodeURIComponent(group.name));
+    const res = await fetch('/groups/' + encodeURIComponent(group.id));
 
     if(!res.ok) {
         console.log("Problem");
@@ -125,11 +125,13 @@ async function getLastMessage(group) {
 //last message wenn es keine Messages in der Gruppe gibt
 export function renderGroups(group, lastMessage) {
     const lastMessageString = lastMessage
-        ? `${lastMessage.sender.username}: ${lastMessage.content}`
+        ? `${lastMessage.senderName}: ${lastMessage.content}`
         : "";
 
     const newGroup = document.createElement("div");
     newGroup.classList.add("group");
+
+    newGroup.setAttribute("data-id", group.id);
 
     newGroup.innerHTML = `
         <div class="group-attributes alert-dot-hidden">
@@ -248,7 +250,7 @@ groupList.addEventListener('click', (event) => {
 
     groupname.textContent = groupNameSelected;
 
-    loadChatInfo(groupNameSelected);
+    loadChatInfo(clicked.getAttribute("data-id"));
     setTimeout(scrollToBottom, 50);
 });
 
