@@ -14,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+
 @RestController
 @RequestMapping("/groups")
 public class GroupController {
@@ -38,6 +39,13 @@ public class GroupController {
   public ResponseEntity<Group> createNewGroup(@Valid @RequestBody GroupDTO groupdto) {
     return ResponseEntity.ok(groupService.createNewGroup(groupdto));
   }
+
+  @PostMapping("/private")
+  public ResponseEntity<Group> createPrivateGroup(@RequestParam Long userId1, @RequestParam Long userId2) {
+      Group group = groupService.createPrivateChat(userId1, userId2);
+      return new ResponseEntity<>(group, HttpStatus.CREATED);
+  }
+  
 
   @PutMapping("/{groupName}/member")
   public ResponseEntity<Group> addGroupMember(

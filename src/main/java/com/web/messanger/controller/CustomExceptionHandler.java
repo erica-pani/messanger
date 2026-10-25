@@ -35,4 +35,10 @@ public class CustomExceptionHandler {
     ErrorResponse errorResponse = new ErrorResponseException(HttpStatus.BAD_REQUEST, exception);
     return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
   }
+
+  @ExceptionHandler(exception = UnsupportedOperationException.class)
+  public ResponseEntity<?> handleIllegalStateException(UnsupportedOperationException exception) {
+    ErrorResponse errorResponse = new ErrorResponseException(HttpStatus.BAD_REQUEST, exception);
+    return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+  }
 }

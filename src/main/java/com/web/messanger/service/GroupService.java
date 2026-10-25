@@ -108,6 +108,9 @@ public class GroupService {
             .filter(g -> g.getName().equals(groupName))
             .orElseThrow(EntityNotFoundException::new);
 
+    for (User user : new ArrayList<>(group.getUsers())) {
+      group.removeUser(user);
+    }
     groupRepository.delete(group);
     return group;
   }
@@ -115,5 +118,10 @@ public class GroupService {
   public boolean isUserinGroup(String username, String groupId) {
     // TODO Auto-generated method stub
     return true;
+  }
+
+  public Group createPrivateChat(Long userId1, Long userId2) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'createPrivateChat'");
   }
 }

@@ -48,6 +48,7 @@ public class SecurityConfig {
                     .permitAll()
                     .anyRequest()
                     .authenticated())
+        .httpBasic(Customizer.withDefaults())
         .formLogin(
             form ->
                 form.loginPage("/login")

@@ -2,6 +2,7 @@ package com.web.messanger.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,6 +24,9 @@ public class Group {
   private Long id;
 
   private String name;
+
+  @Column(name = "is_private", nullable = false)
+  private boolean isPrivate = false;
 
   @JsonIgnore
   @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -69,8 +73,14 @@ public class Group {
   }
 
   public void removeUser(User user) {
+    if (this.isPrivate) {
+      throw new UnsupportedOperationException(
+          "Die Mitgliederliste eines privaten Chats kann nicht bearbeitet werden.");
+    }
+
     if (users.contains(user)) {
-      users.remove(user);
+      this.users.remove(user);
+      user.removeGroup(this);
     }
   }
 

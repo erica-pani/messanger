@@ -93,6 +93,12 @@ public class User {
     groups.add(group);
   }
 
+  public void removeGroup(Group group) {
+    if (groups.contains(group)) {
+      this.groups.remove(group);
+    }
+  }
+
   public Long getId() {
     return id;
   }
