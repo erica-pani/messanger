@@ -267,8 +267,6 @@ public class GroupServiceTests {
     assertTrue(!result.getUsers().contains(newGroupMember));
     assertTrue(result.getUsers().size() == 1);
 
-    verify(groupRepository).save(result);
-
     ArgumentCaptor<Group> captor = ArgumentCaptor.forClass(Group.class);
     verify(groupRepository).save(captor.capture());
 
@@ -322,7 +320,7 @@ public class GroupServiceTests {
 
   @Test
   public void deleteGroupTest() {
-
+    group.setUsers(new HashSet<>());
     when(groupRepository.findById(validGroupId)).thenReturn(Optional.of(group));
 
     Group result = target.deleteGroup(validGroupId, validGroupName);

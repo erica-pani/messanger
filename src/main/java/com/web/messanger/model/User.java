@@ -10,6 +10,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -35,7 +36,7 @@ public class User {
 
   @JsonIgnore
   @ManyToMany(mappedBy = "users")
-  private Set<Group> groups;
+  private Set<Group> groups = new HashSet<>();
 
   public String getFirstname() {
     return firstname;
