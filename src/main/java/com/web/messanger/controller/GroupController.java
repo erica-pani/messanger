@@ -39,21 +39,22 @@ public class GroupController {
     return ResponseEntity.ok(groupService.createNewGroup(groupdto));
   }
 
-  @PutMapping("/{groupName}/addGroupMember")
-  public Group addGroupMember(
-      @RequestParam Long id, @PathVariable String groupName, @RequestParam String username) {
+  @PutMapping("/{groupName}/member")
+  public ResponseEntity<Group> addGroupMember(
+      @RequestParam Long id, @PathVariable String groupName, @RequestParam Long userId) {
 
-    return groupService.addGroupMember(id, groupName, username);
+    return new ResponseEntity<>(groupService.addGroupMember(id, groupName, userId), HttpStatus.OK);
   }
 
-  @DeleteMapping("/{groupName}/removeGroupMember")
-  public Group removeGroupMember(
-      @RequestParam Long id, @PathVariable String groupName, @RequestParam String username) {
+  @DeleteMapping("/{groupName}/member")
+  public ResponseEntity<Group> removeGroupMember(
+      @RequestParam Long groupId, @PathVariable String groupName, @RequestParam Long userId) {
 
-    return groupService.removeGroupMember(id, groupName, username);
+    return new ResponseEntity<>(
+        groupService.removeGroupMember(groupId, groupName, userId), HttpStatus.OK);
   }
 
-  @DeleteMapping("/{groupName}/deleteGroup")
+  @DeleteMapping("/{groupName}")
   public ResponseEntity<Group> deleteGroup(@RequestParam Long id, @PathVariable String groupName) {
 
     return ResponseEntity.ok(groupService.deleteGroup(id, groupName));

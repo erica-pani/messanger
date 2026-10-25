@@ -69,7 +69,7 @@ public class GroupService {
     return groupRepository.save(group);
   }
 
-  public Group addGroupMember(Long id, String groupName, String username) {
+  public Group addGroupMember(Long id, String groupName, Long userId) {
     Group group =
         groupRepository
             .findById(id)
@@ -77,14 +77,15 @@ public class GroupService {
             .orElseThrow(() -> new EntityNotFoundException("Group does not exist"));
 
     User user =
-        Optional.ofNullable(userRepository.findByUsername(username))
+        userRepository
+            .findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("User does not exist"));
 
     group.addUser(user);
     return groupRepository.save(group);
   }
 
-  public Group removeGroupMember(Long id, String groupName, String username) {
+  public Group removeGroupMember(Long id, String groupName, Long userId) {
     Group group =
         groupRepository
             .findById(id)
@@ -92,7 +93,8 @@ public class GroupService {
             .orElseThrow(() -> new EntityNotFoundException("Group does not exist"));
 
     User user =
-        Optional.ofNullable(userRepository.findByUsername(username))
+        userRepository
+            .findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("User does not exist"));
 
     group.removeUser(user);
