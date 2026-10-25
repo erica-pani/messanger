@@ -1,9 +1,11 @@
 package com.web.messanger.service;
 
+import com.web.messanger.controller.mapper.GroupMapper;
 import com.web.messanger.model.ChatMessage;
 import com.web.messanger.model.Group;
 import com.web.messanger.model.User;
 import com.web.messanger.model.dtos.GroupDTO;
+import com.web.messanger.model.dtos.GroupResponseDTO;
 import com.web.messanger.repos.GroupRepository;
 import com.web.messanger.repos.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,19 +19,26 @@ public class GroupService {
 
   private final GroupRepository groupRepository;
   private final UserRepository userRepository;
+  private final GroupMapper groupMapper;
 
-  public GroupService(GroupRepository groupRepository, UserRepository userRepository) {
+  public GroupService(
+      GroupRepository groupRepository, UserRepository userRepository, GroupMapper groupMapper) {
     this.groupRepository = groupRepository;
     this.userRepository = userRepository;
+    this.groupMapper = groupMapper;
   }
 
-  public Collection<Group> getRelevantGroups(Long userId) {
+  public Collection<GroupResponseDTO> getRelevantGroups(Long userId) {
     User user =
         userRepository
             .findById(userId)
             .orElseThrow(() -> new UsernameNotFoundException("User not found: " + userId));
 
-    return user.getGroups();
+    Set<GroupResponseDTO> groups = new HashSet<>();
+    for (Group group : new ArrayList<>(user.getGroups())) {
+      groups.add(groupMapper.toGroupDTO(group));
+    }
+    return groups;
   }
 
   public List<ChatMessage> loadGroupChat(Long groupId) {

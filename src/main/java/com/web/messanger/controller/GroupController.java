@@ -4,6 +4,7 @@ import com.web.messanger.model.ChatMessage;
 import com.web.messanger.model.Group;
 import com.web.messanger.model.UserPrincipal;
 import com.web.messanger.model.dtos.GroupDTO;
+import com.web.messanger.model.dtos.GroupResponseDTO;
 import com.web.messanger.service.GroupService;
 import jakarta.validation.Valid;
 import java.util.Collection;
@@ -25,8 +26,11 @@ public class GroupController {
   }
 
   @GetMapping("/")
-  public Collection<Group> getRelevantGroups(@AuthenticationPrincipal UserDetails userDetails) {
-    return groupService.getRelevantGroups(((UserPrincipal) userDetails).getId());
+  public ResponseEntity<Collection<GroupResponseDTO>> getRelevantGroups(
+      @AuthenticationPrincipal UserDetails userDetails) {
+    Collection<GroupResponseDTO> groups =
+        groupService.getRelevantGroups(((UserPrincipal) userDetails).getId());
+    return new ResponseEntity<>(groups, HttpStatus.OK);
   }
 
   @GetMapping("/{groupId}")
