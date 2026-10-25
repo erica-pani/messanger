@@ -37,7 +37,7 @@ public class WebSocketSecurityConfig implements WebSocketMessageBrokerConfigurer
 
               String groupId = destination.split("/")[3];
 
-              if (!groupService.isUserinGroup(username, groupId)) {
+              if (!groupService.isUserinGroup(username, Long.valueOf(groupId))) {
                 throw new AccessDeniedException("Nicht autorisiert: ");
               }
             }

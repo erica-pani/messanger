@@ -44,8 +44,7 @@ public class ChatController {
     String groupName = message.getGroupName();
 
     Optional<Group> group = Optional.ofNullable(groupRepository.findByName(groupName));
-    Optional<User> sender =
-        Optional.ofNullable(userRepository.findByUsername(message.getSenderName()));
+    Optional<User> sender = userRepository.findByUsername(message.getSenderName());
 
     if (sender.isPresent() && group.isPresent()) {
       message.setSender(sender.get());

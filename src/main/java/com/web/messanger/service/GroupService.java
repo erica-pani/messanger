@@ -115,9 +115,16 @@ public class GroupService {
     return group;
   }
 
-  public boolean isUserinGroup(String username, String groupId) {
-    // TODO Auto-generated method stub
-    return true;
+  public boolean isUserinGroup(String username, Long groupId) {
+    Group group =
+        groupRepository.findById(groupId).orElseThrow(() -> new EntityNotFoundException());
+
+    User user =
+        userRepository
+            .findByUsername(username)
+            .orElseThrow(() -> new UsernameNotFoundException(username));
+
+    return group.getUsers().contains(user);
   }
 
   public Group createPrivateChat(Long userId1, Long userId2) {
