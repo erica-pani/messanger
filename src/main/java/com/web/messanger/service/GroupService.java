@@ -10,6 +10,7 @@ import jakarta.persistence.EntityNotFoundException;
 import java.util.*;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class GroupService {
@@ -115,16 +116,12 @@ public class GroupService {
     return group;
   }
 
+  @Transactional(readOnly = true)
   public boolean isUserinGroup(String username, Long groupId) {
     Group group =
         groupRepository.findById(groupId).orElseThrow(() -> new EntityNotFoundException());
 
-    User user =
-        userRepository
-            .findByUsername(username)
-            .orElseThrow(() -> new UsernameNotFoundException(username));
-
-    return group.getUsers().contains(user);
+    return group.getUsers().stream().anyMatch(user -> user.getUsername().equals(username));
   }
 
   public Group createPrivateChat(Long userId1, Long userId2) {

@@ -41,9 +41,9 @@ public class ChatController {
   @MessageMapping("/chat.sendMessage")
   public ChatMessage sendMessage(@Payload ChatMessage message, SimpMessageHeaderAccessor accessor) {
 
-    String groupName = message.getGroupName();
+    Long groupId = message.getGroupId();
 
-    Optional<Group> group = Optional.ofNullable(groupRepository.findByName(groupName));
+    Optional<Group> group = groupRepository.findById(groupId);
     Optional<User> sender = userRepository.findByUsername(message.getSenderName());
 
     if (sender.isPresent() && group.isPresent()) {
@@ -58,7 +58,7 @@ public class ChatController {
     ChatMessage savedMessage = messageRepository.save(message);
 
     messageTemplate.convertAndSend(
-        "/topic/public/" + savedMessage.getGroup().getName(), savedMessage);
+        "/topic/public/" + savedMessage.getGroup().getId(), savedMessage);
 
     return savedMessage;
   }
@@ -69,7 +69,7 @@ public class ChatController {
     message.setTime(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")));
     accessor.getSessionAttributes().put("username", message.getSenderName());
 
-    messageTemplate.convertAndSend("/topic/public/" + message.getGroup().getName(), message);
+    messageTemplate.convertAndSend("/topic/public/" + message.getGroup().getId(), message);
 
     return message;
   }

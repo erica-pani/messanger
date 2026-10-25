@@ -31,7 +31,7 @@ public class ChatMessage {
 
   @Transient private String senderName;
 
-  @Transient private String groupName;
+  @Transient private Long groupId;
 
   private String time;
   private String color;

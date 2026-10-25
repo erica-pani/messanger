@@ -98,7 +98,7 @@ async function loadGroups() {
         for (const group of groupListOfUser) {
             const lastMessage = await getLastMessage(group); 
             renderGroups(group, lastMessage);
-            stompClient.subscribe("/topic/public/" + group.name, onMessageReceived);
+            stompClient.subscribe("/topic/public/" + group.id, onMessageReceived);
         }
 
     } catch (error) {
@@ -178,10 +178,10 @@ function onMessageReceived(payload) {
 
     if(!activeGroup) null;
 
-    if(!chatCache[message.group.name]) {
-        chatCache[message.group.name] = [];
+    if(!chatCache[message.group.id]) {
+        chatCache[message.group.id] = [];
     }
-    chatCache[message.group.name].push(message);
+    chatCache[message.group.id].push(message);
 
     if(activeGroup.querySelector('h3').textContent === message.groupName) {
         renderChatMessage(message);
@@ -206,7 +206,7 @@ function sendMessage(event) {
         senderName: username,
         content: content,
         color: chatColor,
-        groupName: activeGroup.querySelector('h3').textContent
+        groupId: activeGroup.getAttribute("data-id")
     };
 
     stompClient.send('/app/chat.sendMessage', {}, JSON.stringify(message));
