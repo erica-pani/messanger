@@ -5,5 +5,6 @@ Websocket Endpoint security
 subscription list for user
 JWT for athentication
 private Chats
+BIlder und DOkumente schicken
 
 wenn alles installiert arbeit an react frontend
