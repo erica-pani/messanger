@@ -1,7 +1,7 @@
 package com.web.messanger.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,6 +10,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -25,15 +26,17 @@ public class User {
   private String lastname;
   private String username;
   private String hashed_password;
+
+  @Column(name = "geburtsdatum", columnDefinition = "DATE")
   private LocalDate birthDate;
 
   @JsonIgnore
-  @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "sender")
   private List<ChatMessage> messages;
 
   @JsonIgnore
   @ManyToMany(mappedBy = "users")
-  private Set<Group> groups;
+  private Set<Group> groups = new HashSet<>();
 
   public String getFirstname() {
     return firstname;
@@ -89,6 +92,12 @@ public class User {
 
   public void addGroup(Group group) {
     groups.add(group);
+  }
+
+  public void removeGroup(Group group) {
+    if (groups.contains(group)) {
+      this.groups.remove(group);
+    }
   }
 
   public Long getId() {

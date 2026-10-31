@@ -1,24 +1,37 @@
 package com.web.messanger.service;
 
 import com.web.messanger.model.User;
+import com.web.messanger.model.dtos.UserDTO;
 import com.web.messanger.repos.UserRepository;
 import java.util.ArrayList;
 import java.util.HashSet;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
 
-  @Autowired private UserRepository userRepository;
+  private final UserRepository userRepository;
+  private final BCryptPasswordEncoder encoder;
 
-  @Autowired private BCryptPasswordEncoder encoder;
+  public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    this.userRepository = userRepository;
+    this.encoder = bCryptPasswordEncoder;
+  }
 
-  public void saveUser(User user) {
-    user.setHashed_password(encoder.encode(user.getHashed_password()));
+  public User saveUser(UserDTO userdto) {
+
+    if (userRepository.existsByUsername(userdto.username())) {
+      throw new IllegalArgumentException();
+    }
+    User user = new User();
+    user.setFirstname(userdto.firstname());
+    user.setLastname(userdto.lastname());
+    user.setUsername(userdto.username());
+    user.setHashed_password(encoder.encode(userdto.password()));
+    user.setBirthDate(userdto.birthDate());
     user.setMessages(new ArrayList<>());
     user.setGroups(new HashSet<>());
-    userRepository.save(user);
+    return userRepository.save(user);
   }
 }
