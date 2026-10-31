@@ -36,7 +36,7 @@ public class GroupService {
 
     Set<GroupResponseDTO> groups = new HashSet<>();
     for (Group group : new ArrayList<>(user.getGroups())) {
-      if (group.isPrivate()) {
+      if (group.getIsPrivate()) {
         String name =
             group.getUsers().stream()
                 .filter(u -> !u.getUsername().equals(user.getUsername()))

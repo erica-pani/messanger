@@ -93,7 +93,7 @@ public class Group {
     this.users = users;
   }
 
-  public boolean isPrivate() {
+  public boolean getIsPrivate() {
     return isPrivate;
   }
 
