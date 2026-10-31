@@ -8,6 +8,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.web.messanger.controller.mapper.GroupMapper;
 import com.web.messanger.model.ChatMessage;
 import com.web.messanger.model.Group;
 import com.web.messanger.model.User;
@@ -39,6 +40,8 @@ public class GroupServiceTests {
 
   @Mock private GroupRepository groupRepository;
 
+  @Mock private GroupMapper groupMapper;
+
   @InjectMocks private GroupService target;
 
   GroupDTO groupDTO;
@@ -55,8 +58,10 @@ public class GroupServiceTests {
     groupDTO = new GroupDTO(validGroupName, userIds);
 
     group = new Group();
+    group.setPrivate(false);
     group.setName(validGroupName);
     group.setId(validGroupId);
+    group.setUsers(new HashSet<>());
 
     user = new User();
     user.setUsername(username);
@@ -72,14 +77,16 @@ public class GroupServiceTests {
 
   @Test
   public void getRelevantGroupsTest() {
-    user.setGroups(Set.of(group));
+    group.addUser(user);
+
+    // assertEquals(1, user.getGroups().size());
 
     when(userRepository.findById(validUserId)).thenReturn(Optional.of(user));
 
     Collection<GroupResponseDTO> userGroups = target.getRelevantGroups(validUserId);
 
     assertEquals(1, userGroups.size());
-    //assertTrue(userGroups.contains(group));
+    // assertTrue(userGroups.contains(group));
   }
 
   @Test

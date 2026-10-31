@@ -36,6 +36,15 @@ public class GroupService {
 
     Set<GroupResponseDTO> groups = new HashSet<>();
     for (Group group : new ArrayList<>(user.getGroups())) {
+      if (group.isPrivate()) {
+        String name =
+            group.getUsers().stream()
+                .filter(u -> !u.getUsername().equals(user.getUsername()))
+                .findFirst()
+                .get()
+                .getUsername();
+        group.setName(name);
+      }
       groups.add(groupMapper.toGroupDTO(group));
     }
     return groups;
@@ -134,7 +143,21 @@ public class GroupService {
   }
 
   public Group createPrivateChat(Long userId1, Long userId2) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'createPrivateChat'");
+    User user1 = userRepository.findById(userId1).orElseThrow(() -> new EntityNotFoundException());
+
+    User user2 = userRepository.findById(userId2).orElseThrow(() -> new EntityNotFoundException());
+
+    if (groupRepository.existsAsPrivateChat(user1, user2)) {
+      throw new IllegalStateException();
+    }
+
+    Group group = new Group();
+    group.setMessages(new ArrayList<>());
+    group.setUsers(new HashSet<>());
+    group.setPrivate(true);
+    group.addUser(user1);
+    group.addUser(user2);
+
+    return groupRepository.save(group);
   }
 }

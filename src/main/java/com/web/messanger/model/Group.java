@@ -74,6 +74,7 @@ public class Group {
 
   public void addUser(User user) {
     users.add(user);
+    user.addGroup(this);
   }
 
   public void removeUser(User user) {
