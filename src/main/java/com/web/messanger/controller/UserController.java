@@ -24,6 +24,16 @@ public class UserController {
     this.userMapper = userMapper;
   }
 
+  @GetMapping("/me")
+  public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal UserPrincipal user) {
+
+    if (user == null) {
+      return ResponseEntity.status(401).body("Not logged in");
+    }
+
+    return ResponseEntity.ok(Map.of("username", user.getUsername()));
+  }
+
   @PostMapping("/register")
   public ResponseEntity<UserDTO> register(@Valid @RequestBody UserDTO userdto) {
     User user = service.saveUser(userdto);
