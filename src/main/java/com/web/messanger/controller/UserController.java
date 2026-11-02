@@ -43,5 +43,4 @@ public class UserController {
     User user = service.saveUser(userdto);
     return new ResponseEntity<>(userMapper.toUserDTO(user), HttpStatus.CREATED);
   }
-  
 }

@@ -3,9 +3,11 @@ package com.web.messanger.config;
 import com.web.messanger.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -57,7 +59,7 @@ public class SecurityConfig {
                     .failureUrl("/login/failed")
                     .permitAll())
         .rememberMe(remember -> remember.key("verifyer").tokenValiditySeconds(60 * 60 * 24 * 30))
-        
+
         .logout(logout -> logout.logoutUrl("/logout").deleteCookies("remember-me").permitAll())
         */
         .authenticationProvider(authenticationProvider())
@@ -74,6 +76,12 @@ public class SecurityConfig {
   @Bean
   public BCryptPasswordEncoder bCryptPasswordEncoder() {
     return new BCryptPasswordEncoder(STRENGTH);
+  }
+
+  @Bean
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
+      throws Exception {
+    return config.getAuthenticationManager();
   }
 
   @Bean
