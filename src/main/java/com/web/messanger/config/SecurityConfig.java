@@ -49,7 +49,7 @@ public class SecurityConfig {
                     .anyRequest()
                     .authenticated())
         .httpBasic(Customizer.withDefaults())
-        .formLogin(
+        /* .formLogin(
             form ->
                 form.loginPage("/login")
                     .loginProcessingUrl("/login/check")
@@ -57,7 +57,9 @@ public class SecurityConfig {
                     .failureUrl("/login/failed")
                     .permitAll())
         .rememberMe(remember -> remember.key("verifyer").tokenValiditySeconds(60 * 60 * 24 * 30))
+        
         .logout(logout -> logout.logoutUrl("/logout").deleteCookies("remember-me").permitAll())
+        */
         .authenticationProvider(authenticationProvider())
         .build();
   }
