@@ -1,6 +1,7 @@
 package com.web.messanger.controller;
 
 import com.web.messanger.service.CustomUserDetailsService;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,6 +28,6 @@ public class AuthController {
 
     UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.username());
 
-    return ResponseEntity.status(200).body("Token oder so");
+    return ResponseEntity.status(200).body(Map.of("token", "Token oder so"));
   }
 }
