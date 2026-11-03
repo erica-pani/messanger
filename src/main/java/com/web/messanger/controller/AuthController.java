@@ -27,6 +27,6 @@ public class AuthController {
 
     UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.username());
 
-    return ResponseEntity.ok("Token oder so");
+    return ResponseEntity.status(200).body("Token oder so");
   }
 }
