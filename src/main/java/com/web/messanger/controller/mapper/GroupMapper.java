@@ -18,6 +18,9 @@ public interface GroupMapper {
 
   @Named("verarbeiteGesamtenRecord")
   default ChatMessage verarbeiteGesamtenRecord(Group group) {
+    if (group.getMessages() == null || group.getMessages().isEmpty()) {
+      return null;
+    }
     List<ChatMessage> list = new ArrayList<>(group.getMessages());
     list.sort(Comparator.comparingLong(ChatMessage::getId).reversed());
     return list.get(0);
