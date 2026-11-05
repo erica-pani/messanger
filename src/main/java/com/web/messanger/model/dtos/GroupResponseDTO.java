@@ -1,3 +1,6 @@
 package com.web.messanger.model.dtos;
 
-public record GroupResponseDTO(Long id, String name, boolean isPrivate) {}
+import com.web.messanger.model.ChatMessage;
+
+public record GroupResponseDTO(
+    Long id, String name, boolean isPrivate, ChatMessage lastSendMessage) {}

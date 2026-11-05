@@ -35,7 +35,10 @@ public class UserController {
       return ResponseEntity.status(401).body("Not logged in");
     }
 
-    return ResponseEntity.ok(Map.of("username", user.getUsername()));
+    return ResponseEntity.ok(
+        Map.of(
+            "username", user.getUsername(),
+            "uid", user.getId()));
   }
 
   @PostMapping("/register")
