@@ -38,6 +38,7 @@ public class SecurityConfig {
                 request
                     .requestMatchers(
                         "/login",
+                        "/ws/**",
                         "/login/check",
                         "/register",
                         "/user/register",
